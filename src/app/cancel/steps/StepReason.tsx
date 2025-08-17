@@ -28,7 +28,7 @@ const handleSelect = (reason: string) => {
 
 const handleCustomSubmit = () => {
     if(customReason.trim()) {
-        setForm((prev: any) => ({ ...prev, reason: customReason }));
+        setForm(prev => ({ ...prev, reason: customReason }));
         nextStep();
     }
 };
