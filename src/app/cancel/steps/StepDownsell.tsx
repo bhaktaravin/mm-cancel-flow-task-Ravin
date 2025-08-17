@@ -1,10 +1,11 @@
 import React from "react";
+import type { FormType } from "../CancelFlow";
 
 type Props = {
-    form: {downsellVariant: "A" | "B" | null; acceptedDownsell: boolean | null };
-    setForm: (f:any) => void;
+    form: FormType;
+    setForm: React.Dispatch<React.SetStateAction<FormType>>;
     nextStep: () => void;
-    prevStep:() => void;
+    prevStep: () => void;
 };
 
 export default function StepDownsell({ form, setForm, nextStep, prevStep }: Props) {
@@ -12,7 +13,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
     const variant = form.downsellVariant ?? "A";
 
     const handleAccept = () => {
-        setForm((prev:any) => ({
+        setForm(prev => ({
             ...prev,
             downsellVariant: variant,
             acceptedDownsell: true,
@@ -21,7 +22,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
     };
 
     const handleDecline = () => {
-        setForm((prev:any) => ({
+        setForm(prev => ({
             ...prev,
             downsellVariant: variant,
             acceptedDownsell: false,

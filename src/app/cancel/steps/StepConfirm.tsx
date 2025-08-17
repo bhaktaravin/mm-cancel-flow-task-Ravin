@@ -1,11 +1,8 @@
 import React from "react";
+import type { FormType } from "../CancelFlow";
 
 type Props = {
-  form: {
-    reason: string;
-    downsellVariant: "A" | "B" | null;
-    acceptedDownsell: boolean | null;
-  };
+  form: FormType;
   nextStep: () => void;
   prevStep: () => void;
 };

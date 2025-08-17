@@ -1,11 +1,11 @@
-import React, { useState} from "react";
-
+import React, { useState } from "react";
+import type { FormType } from "../CancelFlow";
 
 type Props = {
-    form: { reason: string };
-    setForm: (f: any) => void;
-    nextStep: () => void;
-    prevStep: () => void;
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
+  nextStep: () => void;
+  prevStep: () => void;
 };
 
 
@@ -22,7 +22,7 @@ export default function StepReason({ form, setForm, nextStep, prevStep }: Props)
 const [customReason, setCustomReason] = useState("");
 
 const handleSelect = (reason: string) => {
-    setForm((prev: any) => ({ ...prev, reason }));
+    setForm(prev => ({ ...prev, reason }));
     if (reason !== "Other") nextStep();
 };
 

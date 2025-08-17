@@ -1,22 +1,26 @@
 import React from "react";
+import type { FormType } from "../CancelFlow";
+import Image from "next/image";
+type Props = {
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
+  nextStep: () => void;
+};
 
-type Proprs = {
-    nextStep: () => void;
-}
-
-export default function StepIntro({ nextStep }: Proprs) {
+export default function StepIntro({ nextStep }: Props) {
 
     return (
     <div className="flex flex-col items-center text-center">
-      {/* Replace src with your main image path */}
-      <img
-        src="/main-image.png"
-        alt="Main"
-        className="w-32 h-32 mb-6 rounded-full object-cover"
-      />
+        <Image
+            src="/main-image.png"
+            alt="Main"
+            width={128}
+            height={128}
+            className="mb-6 rounded-full object-cover"
+        />
       <h2 className="text-2xl font-bold mb-2">Cancel Subscription</h2>
       <p className="mb-6 text-gray-600">
-        We're sorry to see you go. This quick process will help you cancel your subscription.
+        We&apos;re sorry to see you go. This quick process will help you cancel your subscription.
       </p>
       <button
         onClick={nextStep}

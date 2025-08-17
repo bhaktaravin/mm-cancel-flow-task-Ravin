@@ -1,4 +1,12 @@
+"use client";
+
 import { useState } from "react";
+
+export type FormType = {
+    reason: string;
+    downsellVariant: "A" | "B" | null;
+    acceptedDownsell: boolean | null;
+};
 import StepIntro from "./steps/StepIntro";
 import StepReason from "./steps/StepReason";
 import StepDownsell from "./steps/StepDownsell";
@@ -15,7 +23,7 @@ const steps = [
 
 export default function CancelFlow() {
     const [step, setStep] = useState(0);
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<FormType>({
         reason: '',
         downsellVariant: null,
         acceptedDownsell: null
