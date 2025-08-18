@@ -19,12 +19,6 @@ export default function StepFinal() {
       <Link href="/" className="px-6 py-3 bg-gray-100 text-[#8952fc] rounded-lg font-medium hover:bg-gray-200 transition-colors">
         Return to Home
       </Link>
-      <Link href="/support" className="mt-4 text-sm text-gray-500 underline">
-        Need help? Contact Support
-      </Link>
-      <Link href="/privacy" className="mt-4 text-sm text-gray-500 underline">
-        Privacy Policy
-      </Link>
       </div>
   );
 }

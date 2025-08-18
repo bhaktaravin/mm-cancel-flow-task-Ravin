@@ -35,9 +35,9 @@ export default function CancelFlow() {
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow p-6">
             <StepComponent
                 form={form}
-                setForm={setForm} 
-                nextStep={() => setStep(step + 1)}
-                prevStep={() => setStep(step - 1)}
+                setForm={setForm}
+                nextStep={() => setStep((s) => Math.min(s + 1, steps.length - 1))}
+                prevStep={() => setStep((s) => Math.max(s - 1, 0))}
             />
         </div>
     );

@@ -53,7 +53,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
                     </button>
                     <button
                     onClick={handleDecline}
-                    className="w-full px-4 py-2 bg-gray-100 rounded-lg"
+                className="w-full px-4 py-2 bg-[#8952fc] text-white rounded-lg hover:bg-[#7b40fc] transition-colors"
                 >
             No Thanks, Continue Cancellation
                 </button>
@@ -65,7 +65,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
                 </p>
                 <button
                 onClick={handleDecline}
-                className="w-full px-4 py-2 bg-gray-100 rounded-lg mb-2"
+                className="w-full px-4 py-2 bg-[#8952fc] text-white rounded-lg hover:bg-[#7b40fc] transition-colors"
                 >
                     Continue Cancellation
                 </button>
