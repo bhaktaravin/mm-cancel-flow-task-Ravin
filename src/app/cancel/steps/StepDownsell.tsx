@@ -1,6 +1,6 @@
 import React from "react";
-import type { FormType } from "../CancelFlow";
 
+import type { FormType } from "../CancelFlow";
 type Props = {
     form: FormType;
     setForm: React.Dispatch<React.SetStateAction<FormType>>;
@@ -13,7 +13,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
     const variant = form.downsellVariant ?? "A";
 
     const handleAccept = () => {
-        setForm(prev => ({
+    setForm((prev: FormType) => ({
             ...prev,
             downsellVariant: variant,
             acceptedDownsell: true,
@@ -22,7 +22,7 @@ export default function StepDownsell({ form, setForm, nextStep, prevStep }: Prop
     };
 
     const handleDecline = () => {
-        setForm(prev => ({
+    setForm((prev: FormType) => ({
             ...prev,
             downsellVariant: variant,
             acceptedDownsell: false,

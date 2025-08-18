@@ -9,6 +9,7 @@ import StepOffer from "./steps/StepOffer";
 import StepOfferAccepted from "./steps/StepOfferAccepted";
 import StepOfferDeclined from "./steps/StepOfferDeclined";
 import StepError from "./steps/StepError";
+import StepTeamMemberCard from "./steps/StepTeamMemberCard";
 import StepEnd from "./steps/StepEnd";
 
 export type FormType = {
@@ -30,8 +31,9 @@ const steps = [
   StepOffer,            // 4
   StepOfferAccepted,    // 5
   StepOfferDeclined,    // 6
-  StepError,            // 7
-  StepEnd               // 8
+  StepTeamMemberCard,   // 7
+  StepError,            // 8
+  StepEnd               // 9
 ];
 
 
@@ -49,7 +51,7 @@ export default function CancelFlow() {
   });
 
   // Navigation logic for branching
-  const nextStep = (data?: any) => {
+  const nextStep = (data?: boolean) => {
     if (step === 0) { // Job question
       setForm((prev) => ({ ...prev, gotJob: data }));
       setStep(1);
@@ -65,11 +67,12 @@ export default function CancelFlow() {
     } else if (step === 4) { // Offer
       setForm((prev) => ({ ...prev, offerAccepted: data }));
       setStep(data ? 5 : 6); // If accepted, go to OfferAccepted, else OfferDeclined
-    } else if (step === 5) { // OfferAccepted
-      setStep(8); // End
     } else if (step === 6) { // OfferDeclined
-      setStep(8); // End
-    } else if (step === 7) { // Error
+      // If user got visa help, show team member card, else go to end
+      setStep(form.visaHelp ? 7 : 9);
+    } else if (step === 7) { // TeamMemberCard
+      setStep(9); // End
+    } else if (step === 8) { // Error
       setStep(0); // Retry from start
     }
   };
@@ -81,11 +84,13 @@ export default function CancelFlow() {
   const StepComponent = steps[step];
 
 
+  // List of step indices that need form and setForm props
+  const stepsWithForm = [4, 5, 6]; // Example: Offer, OfferAccepted, OfferDeclined
+
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow">
       <StepComponent
-        form={form}
-        setForm={setForm}
+        {...(stepsWithForm.includes(step) ? { form, setForm } : {})}
         nextStep={nextStep}
         prevStep={prevStep}
       />

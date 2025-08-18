@@ -1,6 +1,6 @@
 import React from "react";
-import type { FormType } from "../CancelFlow";
 import Image from "next/image";
+import type { FormType } from "../CancelFlow";
 type Props = {
   form: FormType;
   setForm: React.Dispatch<React.SetStateAction<FormType>>;
