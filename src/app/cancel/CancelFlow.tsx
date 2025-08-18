@@ -1,45 +1,94 @@
 "use client";
 
 import { useState } from "react";
+import StepJobQuestion from "./steps/StepJobQuestion";
+import StepVisaHelp from "./steps/StepVisaHelp";
+import StepWithMM from "./steps/StepWithMM";
+import StepWithoutMM from "./steps/StepWithoutMM";
+import StepOffer from "./steps/StepOffer";
+import StepOfferAccepted from "./steps/StepOfferAccepted";
+import StepOfferDeclined from "./steps/StepOfferDeclined";
+import StepError from "./steps/StepError";
+import StepEnd from "./steps/StepEnd";
 
 export type FormType = {
-    reason: string;
-    downsellVariant: "A" | "B" | null;
-    acceptedDownsell: boolean | null;
+  reason: string;
+  downsellVariant: "A" | "B" | null;
+  acceptedDownsell: boolean | null;
+  gotJob?: boolean | null;
+  visaHelp?: boolean | null;
+  withMM?: boolean | null;
+  offerAccepted?: boolean | null;
+  error?: boolean;
 };
-import StepIntro from "./steps/StepIntro";
-import StepReason from "./steps/StepReason";
-import StepDownsell from "./steps/StepDownsell";
-import StepConfirm from "./steps/StepConfirm";
-import StepFinal from "./steps/StepFinal";
 
 const steps = [
-    StepIntro,
-    StepReason,
-    StepDownsell,
-    StepConfirm,
-    StepFinal
+  StepJobQuestion,      // 0
+  StepVisaHelp,         // 1
+  StepWithMM,           // 2
+  StepWithoutMM,        // 3
+  StepOffer,            // 4
+  StepOfferAccepted,    // 5
+  StepOfferDeclined,    // 6
+  StepError,            // 7
+  StepEnd               // 8
 ];
 
+
 export default function CancelFlow() {
-    const [step, setStep] = useState(0);
-    const [form, setForm] = useState<FormType>({
-        reason: '',
-        downsellVariant: null,
-        acceptedDownsell: null
-    });
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState<FormType>({
+    reason: '',
+    downsellVariant: null,
+    acceptedDownsell: null,
+    gotJob: null,
+    visaHelp: null,
+    withMM: null,
+    offerAccepted: null,
+    error: false
+  });
 
-    const StepComponent = steps[step];
+  // Navigation logic for branching
+  const nextStep = (data?: any) => {
+    if (step === 0) { // Job question
+      setForm((prev) => ({ ...prev, gotJob: data }));
+      setStep(1);
+    } else if (step === 1) { // Visa help
+      setForm((prev) => ({ ...prev, visaHelp: data }));
+      setStep(data ? 2 : 3); // If got help, go to WithMM, else WithoutMM
+    } else if (step === 2) { // WithMM
+      setForm((prev) => ({ ...prev, withMM: data }));
+      setStep(4); // Go to offer
+    } else if (step === 3) { // WithoutMM
+      setForm((prev) => ({ ...prev, withMM: data }));
+      setStep(4); // Go to offer
+    } else if (step === 4) { // Offer
+      setForm((prev) => ({ ...prev, offerAccepted: data }));
+      setStep(data ? 5 : 6); // If accepted, go to OfferAccepted, else OfferDeclined
+    } else if (step === 5) { // OfferAccepted
+      setStep(8); // End
+    } else if (step === 6) { // OfferDeclined
+      setStep(8); // End
+    } else if (step === 7) { // Error
+      setStep(0); // Retry from start
+    }
+  };
 
-    return (
-        <div className="w-full max-w-md p-6 bg-white rounded-lg shadow p-6">
-            <StepComponent
-                form={form}
-                setForm={setForm}
-                nextStep={() => setStep((s) => Math.min(s + 1, steps.length - 1))}
-                prevStep={() => setStep((s) => Math.max(s - 1, 0))}
-            />
-        </div>
-    );
+  const prevStep = () => {
+    setStep((s) => Math.max(s - 1, 0));
+  };
 
+  const StepComponent = steps[step];
+
+
+  return (
+    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow">
+      <StepComponent
+        form={form}
+        setForm={setForm}
+        nextStep={nextStep}
+        prevStep={prevStep}
+      />
+    </div>
+  );
 }
