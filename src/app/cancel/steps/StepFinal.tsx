@@ -24,15 +24,15 @@ export default function StepFinal() {
           </p>
         </div>
         {/* Button */}
-        <a
+        <Link
           href="/"
           className="w-full block py-3 bg-[#8952fc] text-white rounded-lg font-semibold text-lg shadow hover:bg-[#7b40fc] transition-colors text-center"
         >
           Return to Home
-        </a>
+        </Link>
       </div>
       <div className="flex-shrink-0 flex items-center justify-center bg-gray-50 p-6 md:p-0">
-        <img
+        <Image
           src="/empire-state-compressed.jpg"
           alt="Empire State Building"
           width={320}

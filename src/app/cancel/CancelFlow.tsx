@@ -23,17 +23,24 @@ export type FormType = {
   error?: boolean;
 };
 
+type StepProps = {
+  nextStep: (data?: boolean) => void;
+  prevStep: () => void;
+  form?: FormType;
+  setForm?: React.Dispatch<React.SetStateAction<FormType>>;
+};
+
 const steps = [
-  StepJobQuestion,      // 0
-  StepVisaHelp,         // 1
-  StepWithMM,           // 2
-  StepWithoutMM,        // 3
-  StepOffer,            // 4
-  StepOfferAccepted,    // 5
-  StepOfferDeclined,    // 6
-  StepTeamMemberCard,   // 7
-  StepError,            // 8
-  StepEnd               // 9
+  StepJobQuestion as React.ComponentType<StepProps>,      // 0
+  StepVisaHelp as React.ComponentType<StepProps>,         // 1
+  StepWithMM as React.ComponentType<StepProps>,           // 2
+  StepWithoutMM as React.ComponentType<StepProps>,        // 3
+  StepOffer as React.ComponentType<StepProps>,            // 4
+  StepOfferAccepted as React.ComponentType<StepProps>,    // 5
+  StepOfferDeclined as React.ComponentType<StepProps>,    // 6
+  StepTeamMemberCard as React.ComponentType<StepProps>,   // 7
+  StepError as React.ComponentType<StepProps>,            // 8
+  StepEnd as React.ComponentType<StepProps>               // 9
 ];
 
 
@@ -53,27 +60,29 @@ export default function CancelFlow() {
   // Navigation logic for branching
   const nextStep = (data?: boolean) => {
     if (step === 0) { // Job question
-      setForm((prev) => ({ ...prev, gotJob: data }));
-      setStep(1);
-    } else if (step === 1) { // Visa help
-      setForm((prev) => ({ ...prev, visaHelp: data }));
-      setStep(data ? 2 : 3); // If got help, go to WithMM, else WithoutMM
+      const hasJob = Boolean(data);
+      setForm(prev => ({ ...prev, gotJob: hasJob }));
+      setStep(hasJob ? 1 : 4); // If no job, skip to offer
+    } else if (step === 1) { // Visa help (only shown if they got a job)
+      setForm(prev => ({ ...prev, visaHelp: data }));
+      setStep(data ? 2 : 3);
     } else if (step === 2) { // WithMM
-      setForm((prev) => ({ ...prev, withMM: data }));
-      setStep(4); // Go to offer
+      setForm(prev => ({ ...prev, withMM: data }));
+      setStep(4);
     } else if (step === 3) { // WithoutMM
-      setForm((prev) => ({ ...prev, withMM: data }));
-      setStep(4); // Go to offer
+      setForm(prev => ({ ...prev, withMM: data }));
+      setStep(4);
     } else if (step === 4) { // Offer
-      setForm((prev) => ({ ...prev, offerAccepted: data }));
-      setStep(data ? 5 : 6); // If accepted, go to OfferAccepted, else OfferDeclined
+      setForm(prev => ({ ...prev, offerAccepted: data }));
+      setStep(data ? 5 : 6);
     } else if (step === 6) { // OfferDeclined
-      // If user got visa help, show team member card, else go to end
-      setStep(form.visaHelp ? 7 : 9);
+      // Skip team member card if user didn't get a job (which means they didn't get visa help)
+      const skipToEnd = !form.gotJob || !form.visaHelp;
+      setStep(skipToEnd ? 9 : 7);
     } else if (step === 7) { // TeamMemberCard
-      setStep(9); // End
+      setStep(9);
     } else if (step === 8) { // Error
-      setStep(0); // Retry from start
+      setStep(0);
     }
   };
 
@@ -83,17 +92,24 @@ export default function CancelFlow() {
 
   const StepComponent = steps[step];
 
-
   // List of step indices that need form and setForm props
-  const stepsWithForm = [4, 5, 6]; // Example: Offer, OfferAccepted, OfferDeclined
+  const stepsWithForm = [4, 5, 6, 7, 9]; // Offer, OfferAccepted, OfferDeclined, TeamMemberCard, End
+
+  const props: StepProps = stepsWithForm.includes(step)
+    ? {
+        form,
+        setForm,
+        nextStep,
+        prevStep,
+      }
+    : {
+        nextStep,
+        prevStep,
+      };
 
   return (
     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-      <StepComponent
-        {...(stepsWithForm.includes(step) ? { form, setForm } : {})}
-        nextStep={nextStep}
-        prevStep={prevStep}
-      />
+      <StepComponent {...props} />
     </div>
   );
 }
