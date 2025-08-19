@@ -13,11 +13,8 @@ export default function StepOneSurvey({
   setForm,
   prevStep,
   nextStep,
-  isOpen,
   onClose,
 }: StepProps) {
-  if (!isOpen) return null;
-
   const [apply, setApply] = useState<string>(form.surveyApply ?? "");
   const [email, setEmail] = useState<string>(form.surveyEmail ?? "");
   const [interview, setInterview] = useState<string>(form.surveyInterview ?? "");
@@ -34,9 +31,7 @@ export default function StepOneSurvey({
     nextStep();
   }
 
-  // Placeholder for green button action
   function openOfferModal() {
-    // TODO: Implement modal logic here
     alert("Offer modal should open here!");
   }
 
@@ -162,7 +157,6 @@ export default function StepOneSurvey({
                 className="w-full py-3 rounded-xl font-semibold text-lg bg-[#56C26A] text-white transition-colors"
                 style={{ fontWeight: "600", borderRadius: "10px" }}
                 onClick={openOfferModal}
-                // NOTE: do NOT call handleContinue here!
               >
                 Get 50% off | $12.50 <span className="line-through text-gray-200 ml-2" style={{ fontWeight: "400" }}>$25</span>
               </button>

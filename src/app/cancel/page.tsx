@@ -1,10 +1,23 @@
+'use client';
+
+import React, { useState } from "react";
 import CancelFlow from './CancelFlow';
 
+export default function CancelPage() {
+    const [showModal, setShowModal] = useState(true);
 
-export default function CancelPage(){
+    function handleClose() {
+        setShowModal(false);
+    }
+
     return (
         <main className="min-h-screen flex items-center justify-center bg-gray-50">
-            <CancelFlow />
+            {showModal && (
+                <CancelFlow
+                    isOpen={true}
+                    onClose={handleClose}
+                />
+            )}
         </main>
-    )
+    );
 }

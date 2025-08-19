@@ -1,227 +1,236 @@
 'use client';
 
 import React, { useState } from "react";
+
 import StepJobQuestion from "./steps/StepJobQuestion";
 import StepOffer from "./steps/StepOffer";
-import StepOneSurvey from "./steps/survey/StepOneSurvery";
-import StepTwoSurvey from "./steps/survey/StepTwpSurvery";
-import StepThreeSurvey from "./steps/survey/StepThreeSurvery";
-import ReasonTooExpensiveModal from "./steps/reasons/ReasonTooExpensiveModal";
-import ReasonPlatformNotHelpfulModal from "./steps/reasons/ReasonPlatformNotHelpful";
-import ReasonNotEnoughJobsModal from "./steps/reasons/ReasonsNotEnoughJobsModal";
-import ReasonDecidedNotToMoveModal from "./steps/reasons/ReasonDecidedNotToMoveModal";
-import ReasonOtherModal from "./steps/reasons/ReasonOtherModal";
+import StepOneSurvery from "./steps/survey/StepOneSurvery";
+import StepTwpSurvery from "./steps/survey/StepTwpSurvery";
+import StepThreeSurvery from "./steps/survey/StepThreeSurvery";
+import StepReason from "./steps/StepReason";
 import StepEnd from "./steps/StepEnd";
 
+import ReasonTooExpensiveModal from "./steps/reasons/ReasonTooExpensiveModal";
+import ReasonPlatformNotHelpful from "./steps/reasons/ReasonPlatformNotHelpful";
+import ReasonsNotEnoughJobsModal from "./steps/reasons/ReasonsNotEnoughJobsModal";
+import ReasonOtherModal from "./steps/reasons/ReasonOtherModal";
+import ReasonDecidedNotToMoveModal from "./steps/reasons/ReasonDecidedNotToMoveModal";
+
+// ---- TYPES ----
 export type FormType = {
-  reasonSelected?: string;
+  gotJob?: boolean;
+  offerAccepted?: boolean;
+  surveyAnswers?: string[];
   reason?: string;
-  platformFeedback?: string;
-  notEnoughJobsFeedback?: string;
-  decidedNotToMoveFeedback?: string;
-  otherFeedback?: string;
-  tooExpensiveMaxPrice?: string;
-  surveyApply?: string;
-  surveyEmail?: string;
-  surveyInterview?: string;
-  platformHelpfulness?: string;
-  platformComments?: string;
-  endDate?: string;
+  [key: string]: any;
 };
 
 export type StepProps = {
-  nextStep: (data?: any) => void;
-  prevStep: () => void;
   form: FormType;
   setForm: React.Dispatch<React.SetStateAction<FormType>>;
-  isOpen: boolean;
-  onClose?: () => void;
+  nextStep: (data?: any) => void;
+  prevStep?: () => void;
+  onClose: () => void;
+  reason?: string;
+  isOpen?: boolean;
 };
 
-export default function CancelFlow() {
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormType>({});
-  const [isModalOpen, setIsModalOpen] = useState(true);
+type CancelFlowProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-  function nextStep(data?: any) {
-    setStep((prev) => prev + 1);
-    if (data) setForm((f: FormType) => ({ ...f, ...data }));
+export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
+  console.log("CancelFlow rendered, isOpen:", isOpen); // <--- Add this
+
+  const [step, setStep] = useState<
+    | "job"
+    | "offer"
+    | "survey1"
+    | "survey2"
+    | "survey3"
+    | "reason"
+    | "reasonModal"
+    | "end"
+  >("job");
+  const [form, setForm] = useState<FormType>({ surveyAnswers: [] });
+  const [selectedReason, setSelectedReason] = useState<string | null>(null);
+
+  function handleJobAnswer(gotJob: boolean) {
+    setForm(f => ({ ...f, gotJob }));
+    if (gotJob) setStep("end");
+    else setStep("offer");
   }
-  function prevStep() {
-    setStep((prev) => Math.max(prev - 1, 0));
+  function handleOfferChoice(accepted: boolean) {
+    setForm(f => ({ ...f, offerAccepted: accepted }));
+    setStep("survey1");
   }
-  function closeModal() {
-    setIsModalOpen(false);
+  function handleSurveyAnswer(answer: string) {
+    setForm(f => ({
+      ...f,
+      surveyAnswers: [...(f.surveyAnswers || []), answer],
+    }));
+    if (step === "survey1") setStep("survey2");
+    else if (step === "survey2") setStep("survey3");
+    else if (step === "survey3") setStep("reason");
+  }
+  function handleReasonNextStep(reason: string) {
+    setForm(f => ({ ...f, reason }));
+    setSelectedReason(reason);
+    setStep("reasonModal");
+  }
+  function handleReasonModalDone(data?: any) {
+    if (data) setForm(f => ({ ...f, ...data }));
+    setStep("end");
+  }
+  function handlePrevStep() {
+    if (step === "offer") setStep("job");
+    else if (step === "survey1") setStep("offer");
+    else if (step === "survey2") setStep("survey1");
+    else if (step === "survey3") setStep("survey2");
+    else if (step === "reason") setStep("survey3");
+    else if (step === "reasonModal") setStep("reason");
   }
 
-  let ReasonModalComponent: React.FC<StepProps> | null = null;
-  if (step === 6) {
-    switch (form.reasonSelected) {
-      case "too_expensive":
-        ReasonModalComponent = ReasonTooExpensiveModal;
-        break;
-      case "platform_not_helpful":
-        ReasonModalComponent = ReasonPlatformNotHelpfulModal;
-        break;
-      case "not_enough_jobs":
-        ReasonModalComponent = ReasonNotEnoughJobsModal;
-        break;
-      case "decided_not_to_move":
-        ReasonModalComponent = ReasonDecidedNotToMoveModal;
-        break;
-      case "other":
-        ReasonModalComponent = ReasonOtherModal;
-        break;
+  function getReasonModal(reason: string | null) {
+    switch (reason) {
+      case "Too expensive":
+        return (
+          <ReasonTooExpensiveModal
+            form={form}
+            setForm={setForm}
+            nextStep={handleReasonModalDone}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        );
+      case "Platform not helpful":
+        return (
+          <ReasonPlatformNotHelpful
+            form={form}
+            setForm={setForm}
+            nextStep={handleReasonModalDone}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        );
+      case "Not enough jobs":
+        return (
+          <ReasonsNotEnoughJobsModal
+            form={form}
+            setForm={setForm}
+            nextStep={handleReasonModalDone}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        );
+      case "Other":
+        return (
+          <ReasonOtherModal
+            form={form}
+            setForm={setForm}
+            nextStep={handleReasonModalDone}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        );
+      case "Decided not to move":
+        return (
+          <ReasonDecidedNotToMoveModal
+            form={form}
+            setForm={setForm}
+            nextStep={handleReasonModalDone}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        );
       default:
-        ReasonModalComponent = null;
+        return (
+          <StepEnd
+            form={form}
+            setForm={setForm}
+            prevStep={handlePrevStep}
+            nextStep={() => {}}
+            onClose={onClose}
+          />
+        );
     }
   }
 
+  if (!isOpen) return null;
+
   return (
-    <>
-      {/* Step 0: Job Question */}
-      {step === 0 && (
-        <StepJobQuestion
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 1: Offer */}
-      {step === 1 && (
-        <StepOffer
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 2: Survey 1 */}
-      {step === 2 && (
-        <StepOneSurvey
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 3: Survey 2 */}
-      {step === 3 && (
-        <StepTwoSurvey
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 4: Survey 3 */}
-      {step === 4 && (
-        <StepThreeSurvey
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 5: Reason selection UI */}
-      {step === 5 && (
-        <div className="flex flex-col items-center justify-center p-6">
-          <h2 className="text-2xl font-bold mb-4">Why are you cancelling?</h2>
-          <div className="flex flex-col gap-3 w-full max-w-md">
-            <button
-              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
-              onClick={() => {
-                setForm((f: FormType) => ({ ...f, reasonSelected: "too_expensive" }));
-                nextStep();
-              }}
-            >
-              Too expensive
-            </button>
-            <button
-              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
-              onClick={() => {
-                setForm((f: FormType) => ({ ...f, reasonSelected: "platform_not_helpful" }));
-                nextStep();
-              }}
-            >
-              Platform not helpful
-            </button>
-            <button
-              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
-              onClick={() => {
-                setForm((f: FormType) => ({ ...f, reasonSelected: "not_enough_jobs" }));
-                nextStep();
-              }}
-            >
-              Not enough relevant jobs
-            </button>
-            <button
-              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
-              onClick={() => {
-                setForm((f: FormType) => ({ ...f, reasonSelected: "decided_not_to_move" }));
-                nextStep();
-              }}
-            >
-              Decided not to move
-            </button>
-            <button
-              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
-              onClick={() => {
-                setForm((f: FormType) => ({ ...f, reasonSelected: "other" }));
-                nextStep();
-              }}
-            >
-              Other
-            </button>
-          </div>
-          <button
-            className="mt-6 text-gray-500 underline"
-            onClick={prevStep}
-          >
-            &larr; Back
-          </button>
-        </div>
-      )}
-
-      {/* Step 6: Reason modal */}
-      {step === 6 && ReasonModalComponent && (
-        <ReasonModalComponent
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-
-      {/* Step 7: Done/End */}
-      {step === 7 && (
-        <StepEnd
-          form={form}
-          setForm={setForm}
-          nextStep={nextStep}
-          prevStep={prevStep}
-          isOpen={isModalOpen}
-          onClose={closeModal}
-        />
-      )}
-    </>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 p-4"
+      aria-modal="true"
+      role="dialog"
+    >
+      <div
+        className="w-full max-w-xl mx-auto"
+        onClick={e => e.stopPropagation()}
+      >
+        {step === "job" && (
+          <StepJobQuestion
+            form={form}
+            setForm={setForm}
+            nextStep={handleJobAnswer}
+            onClose={onClose}
+          />
+        )}
+        {step === "offer" && (
+          <StepOffer
+            form={form}
+            setForm={setForm}
+            nextStep={handleOfferChoice}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        )}
+        {step === "survey1" && (
+          <StepOneSurvery
+            form={form}
+            setForm={setForm}
+            nextStep={handleSurveyAnswer}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        )}
+        {step === "survey2" && (
+          <StepTwpSurvery
+            form={form}
+            setForm={setForm}
+            nextStep={handleSurveyAnswer}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        )}
+        {step === "survey3" && (
+          <StepThreeSurvery
+            form={form}
+            setForm={setForm}
+            nextStep={handleSurveyAnswer}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        )}
+        {step === "reason" && (
+          <StepReason
+            nextStep={handleReasonNextStep}
+            prevStep={handlePrevStep}
+            onClose={onClose}
+          />
+        )}
+        {step === "reasonModal" && getReasonModal(selectedReason)}
+        {step === "end" && (
+          <StepEnd
+            form={form}
+            setForm={setForm}
+            prevStep={handlePrevStep}
+            nextStep={() => {}}
+            onClose={onClose}
+          />
+        )}
+      </div>
+    </div>
   );
 }

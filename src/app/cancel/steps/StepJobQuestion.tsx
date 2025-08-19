@@ -2,22 +2,17 @@
 
 import React from "react";
 import Image from "next/image";
-import type { StepProps } from "../CancelFlow"; // Adjust path if needed
+import type { StepProps } from "../CancelFlow";
 
 export default function StepJobQuestion({
+  nextStep,
+  onClose,
   form,
   setForm,
-  nextStep,
-  prevStep,
-  isOpen,
-  onClose,
 }: StepProps) {
-  if (!isOpen) return null;
-
   // Handler for answer
   function handleAnswer(answer: boolean) {
-    setForm(f => ({ ...f, foundJob: answer }));
-    nextStep();
+    nextStep(answer);
   }
 
   return (
@@ -27,7 +22,7 @@ export default function StepJobQuestion({
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif"
       }}
-      onClick={onClose}
+      // NO onClick={onClose} here!
     >
       <div
         className="bg-white rounded-[24px] shadow-xl w-full overflow-hidden flex flex-col"

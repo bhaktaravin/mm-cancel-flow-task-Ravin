@@ -1,26 +1,28 @@
 import React from "react";
+import type { FormType } from "../CancelFlow";
 
-import type {FormType}  from "../CancelFlow";
 type Props = {
   form: FormType;
   nextStep: () => void;
   prevStep: () => void;
+  onClose: () => void;
+  reason?: string;
 };
 
-export default function StepConfirm({ form, nextStep, prevStep }: Props) {
+export default function StepConfirm({ form, nextStep, prevStep, onClose, reason }: Props) {
   return (
     <div className="flex flex-col items-center text-center">
       <h2 className="text-xl font-bold mb-4">Confirm Your Choice</h2>
       <div className="mb-4 text-gray-700">
         <div>
-          <span className="font-semibold">Reason:</span> {form.reason}
+          <span className="font-semibold">Reason:</span> {reason ?? form.reason}
         </div>
         <div>
           <span className="font-semibold">Downsell Variant:</span> {form.downsellVariant ?? "N/A"}
         </div>
         <div>
           <span className="font-semibold">Accepted Downsell:</span>{" "}
-          {form.acceptedDownsell === null
+          {form.acceptedDownsell == null
             ? "N/A"
             : form.acceptedDownsell
             ? "Yes"
@@ -38,6 +40,12 @@ export default function StepConfirm({ form, nextStep, prevStep }: Props) {
         className="mt-2 text-sm text-gray-500 underline"
       >
         Back
+      </button>
+      <button
+        onClick={onClose}
+        className="mt-2 text-sm text-gray-400 underline"
+      >
+        Close
       </button>
     </div>
   );

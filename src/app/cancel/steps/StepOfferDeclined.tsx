@@ -3,12 +3,11 @@ import Image from "next/image";
 
 type Props = {
   nextStep: () => void;
-  form: { gotJob?: boolean | null };
   isOpen: boolean;
   onClose: () => void;
 };
 
-export default function StepOfferDeclined({ nextStep, form, isOpen, onClose }: Props) {
+export default function StepOfferDeclined({ nextStep, isOpen, onClose }: Props) {
   if (!isOpen) return null;
 
   return (
@@ -65,11 +64,11 @@ export default function StepOfferDeclined({ nextStep, form, isOpen, onClose }: P
                 Great choice, mate!
               </h2>
               <div className="mb-3 text-2xl md:text-2xl font-semibold" style={{ color: "#222" }}>
-                You're still on the path to your dream role.{" "}
-                <span style={{ color: "#8952fc" }}>Let’s make it happen together!</span>
+                You&apos;re still on the path to your dream role.{" "}
+                <span style={{ color: "#8952fc" }}>Let&apos;s make it happen together!</span>
               </div>
               <div className="mb-2 text-base text-gray-700 font-medium">
-                You've got XX days left on your current plan.<br />
+                You&apos;ve got XX days left on your current plan.<br />
                 Starting from XX date, your monthly payment will be <span className="font-bold">$12.50</span>.
               </div>
               <div className="mb-6 text-xs text-gray-500 italic">

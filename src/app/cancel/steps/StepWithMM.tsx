@@ -2,13 +2,12 @@ import React, { useState } from "react";
 import Image from "next/image";
 
 type Props = {
-  nextStep: (data?: boolean) => void;
   prevStep: () => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export default function StepVisaLawyerHelp({ nextStep, prevStep, isOpen, onClose }: Props) {
+export default function StepVisaLawyerHelp({ prevStep, isOpen, onClose }: Props) {
   const [visaType, setVisaType] = useState("");
   const [lawyerHelp, setLawyerHelp] = useState(true);
 
@@ -78,7 +77,7 @@ export default function StepVisaLawyerHelp({ nextStep, prevStep, isOpen, onClose
                   lineHeight: "1.1",
                 }}
               >
-                We helped you land the job, now let’s <br className="hidden md:inline" />
+                We helped you land the job, now let&apos;s <br className="hidden md:inline" />
                 help you secure your visa.
               </h2>
               <p

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import type { StepProps } from "../../CancelFlow";
 
-export default function StepThreeSurvey({ form, setForm, nextStep, prevStep, isOpen, onClose }: StepProps) {
+export default function StepThreeSurvey({ form, setForm, nextStep, prevStep, onClose }: StepProps) {
   const [otherFeedback, setOtherFeedback] = useState<string>(form.otherFeedback ?? "");
 
   function handleContinue() {
@@ -13,8 +13,6 @@ export default function StepThreeSurvey({ form, setForm, nextStep, prevStep, isO
     }));
     nextStep();
   }
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -43,7 +41,7 @@ export default function StepThreeSurvey({ form, setForm, nextStep, prevStep, isO
         {/* Main Content */}
         <div className="flex flex-col w-full flex-1 p-8 gap-6">
           <h2 className="font-bold text-2xl mb-3" style={{ color: "#111827" }}>
-            Anything else you'd like to share?
+            Anything else you&apos;d like to share?
           </h2>
           <textarea
             className="border rounded-lg p-3 w-full text-base"

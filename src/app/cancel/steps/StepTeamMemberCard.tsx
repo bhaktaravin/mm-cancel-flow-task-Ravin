@@ -93,7 +93,7 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
                   >
                     cancellation
                   </span>{" "}
-                  &rsquo;s all sorted, mate, no more charges.
+                  &apos;s all sorted, mate, no more charges.
                 </h2>
                 <div className="flex items-center gap-3 mt-3">
                   <Image
@@ -134,9 +134,9 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
                     lineHeight: '1.5'
                   }}
                 >
-                  I'll be reaching out soon to help with the visa side of things.<br />
-                  We've got your back, whether it's questions, paperwork, or just figuring out your options.<br />
-                  Keep an eye on your inbox, I'll be in touch shortly.
+                  I&apos;ll be reaching out soon to help with the visa side of things.<br />
+                  We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.<br />
+                  Keep an eye on your inbox, I&apos;ll be in touch shortly.
                 </p>
               </div>
             </div>

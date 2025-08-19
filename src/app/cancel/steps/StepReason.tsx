@@ -1,77 +1,96 @@
+'use client';
+
 import React, { useState } from "react";
 
-import type { FormType } from "../CancelFlow";
-type Props = {
-  form: FormType;
-  setForm: React.Dispatch<React.SetStateAction<FormType>>;
-  nextStep: () => void;
-  prevStep: () => void;
-};
-
-
-const reasons = [
-    "Too expensive",
-    "Not using enough",
-    "Found a better alternative",
-    "Just testing things out",
-    "Other"
+const REASONS = [
+  "Too expensive",
+  "Platform not helpful",
+  "Not enough relevant jobs",
+  "Decided not to move",
+  "Other",
 ];
 
-
-export default function StepReason({ form, setForm, nextStep, prevStep }: Props) {
-const [customReason, setCustomReason] = useState("");
-
-const handleSelect = (reason: string) => {
-  setForm((prev: FormType) => ({ ...prev, reason }));
-    if (reason !== "Other") nextStep();
+type Props = {
+  onClose: () => void;
+  prevStep: () => void;
+  nextStep: (reason: string, action: "offer" | "cancel") => void;
 };
 
-const handleCustomSubmit = () => {
-    if(customReason.trim()) {
-  setForm((prev: FormType) => ({ ...prev, reason: customReason }));
-        nextStep();
-    }
-};
+export default function StepReason({
+  onClose,
+  prevStep,
+  nextStep,
+}: Props) {
+  const [selected, setSelected] = useState<string>("");
 
-
-return (
-  <div className="flex flex-col items-center text-center">
-    <h2 className="text-xl font-bold mb-4 text-gray-900">Why are you cancelling?</h2>
-    <div className="space-y-3 w-full max-w-xs mb-6">
-      {reasons.map((reason) => (
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 p-4"
+      aria-modal="true"
+      role="dialog"
+    >
+      <div
+        className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-auto px-8 py-10 flex flex-col items-center relative"
+        style={{ minWidth: 340 }}
+        onClick={e => e.stopPropagation()}
+      >
+        <h2 className="text-2xl font-bold mb-8 text-gray-900 text-center">
+          What's the main reason for cancelling?
+        </h2>
+        <div className="flex flex-col gap-4 w-full mb-8">
+          {REASONS.map(reason => (
+            <button
+              key={reason}
+              className={`py-4 px-6 rounded-xl border text-base font-semibold transition
+                ${selected === reason
+                  ? "bg-[#F3F3FF] border-[#7C5CFA] text-[#222]"
+                  : "bg-white border-gray-300 text-[#222] hover:border-[#7C5CFA]"}
+              `}
+              onClick={() => setSelected(reason)}
+              type="button"
+            >
+              {reason}
+            </button>
+          ))}
+        </div>
         <button
-          key={reason}
-          onClick={() => handleSelect(reason)}
-          className="w-full px-4 py-2 bg-white text-gray-900 rounded-lg border border-gray-300 hover:bg-gray-100"
+          className="w-full py-3 rounded-xl font-bold text-lg bg-[#56C26A] text-white mb-3 transition"
+          disabled={!selected}
+          style={{
+            opacity: selected ? 1 : 0.55,
+            cursor: selected ? "pointer" : "not-allowed",
+          }}
+          onClick={() => nextStep(selected, "offer")}
         >
-          {reason}
+          Get 50% off | $12.50 <span className="ml-2 text-gray-200 line-through text-base">$25</span>
         </button>
-      ))}
-    </div>
-    {form.reason === "Other" && (
-      <div className="w-full max-w-xs mb-4">
-        <input
-          type="text"
-          placeholder="Please specify"
-          value={customReason}
-          onChange={(e) => setCustomReason(e.target.value)}
-          className="w-full px-3 py-2 border rounded-lg mb-2 text-gray-900 bg-white"
-        />
         <button
-          onClick={handleCustomSubmit}
-          className="w-full px-4 py-2 bg-[#8952fc] text-white rounded-lg"
+          className="w-full py-3 rounded-xl font-bold text-lg bg-[#EAEAEA] text-gray-400"
+          disabled={!selected}
+          style={{
+            opacity: selected ? 1 : 0.55,
+            cursor: selected ? "pointer" : "not-allowed",
+          }}
+          onClick={() => nextStep(selected, "cancel")}
         >
-          Continue
+          Complete cancellation
+        </button>
+        <button
+          className="mt-6 text-[#7C5CFA] underline font-medium"
+          onClick={prevStep}
+          type="button"
+        >
+          &larr; Back
+        </button>
+        <button
+          className="absolute top-5 right-7 text-gray-400 hover:text-gray-600 text-2xl font-light"
+          aria-label="Close"
+          onClick={onClose}
+          type="button"
+        >
+          ×
         </button>
       </div>
-    )}
-    <button
-      onClick={prevStep}
-      className="mt-2 text-sm text-gray-700 underline"
-    >
-      Back
-    </button>
-  </div>
-);
-
+    </div>
+  );
 }

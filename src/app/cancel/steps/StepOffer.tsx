@@ -2,17 +2,16 @@
 
 import React from "react";
 import Image from "next/image";
-import type { StepProps } from "../CancelFlow"; // <-- Import the shared props type
+import type { StepProps } from "../CancelFlow";
 
 export default function StepOffer({
-  form,
-  setForm,
   nextStep,
   prevStep,
-  isOpen,
   onClose,
+  form,
+  setForm,
 }: StepProps) {
-  if (!isOpen) return null;
+  // No isOpen check!
 
   return (
     <div 
@@ -21,7 +20,7 @@ export default function StepOffer({
       tabIndex={-1}
       aria-modal="true"
       role="dialog"
-      onClick={onClose}
+      // REMOVE onClick={onClose} here!
     >
       <div 
         className="bg-white rounded-[24px] shadow-xl w-full overflow-hidden flex flex-col"
@@ -65,31 +64,31 @@ export default function StepOffer({
                 We built this to help you land the job, this makes it a little easier.
               </h2>
               <p className="leading-relaxed text-lg md:text-xl mb-6 text-gray-600 font-medium">
-                We’ve been there and we’re here to help you.
+                We&apos;ve been there and we&apos;re here to help you.
               </p>
               {/* Offer Box */}
               <div className="rounded-xl border border-[#C5B6F6] bg-[#F6F4FF] px-5 py-6 mb-4 text-center shadow-sm">
                 <div className="font-bold text-lg md:text-xl mb-1 text-gray-900">
-                  Here’s 50% off until you find a job.
+                  Here&apos;s 50% off until you find a job.
                 </div>
                 <div className="flex items-center justify-center gap-3 mb-3">
                   <span className="text-[#7C5CFA] text-2xl md:text-3xl font-bold">$12.50/month</span>
                   <span className="text-gray-400 line-through text-lg md:text-xl">$25/month</span>
                 </div>
                 <button
-                  onClick={() => nextStep(true)}
+                  onClick={() => nextStep({ downsellAccepted: true })}
                   className="w-full py-3 rounded-xl font-bold text-lg bg-[#56C26A] text-white transition-colors mb-1"
                 >
                   Get 50% off
                 </button>
                 <div className="text-xs mt-2 text-gray-500">
-                  You won’t be charged until your next billing date.
+                  You won&apos;t be charged until your next billing date.
                 </div>
               </div>
             </div>
             {/* No thanks button */}
             <button
-              onClick={() => nextStep(false)}
+              onClick={() => nextStep({ downsellAccepted: false })}
               className="w-full py-3 border border-gray-300 rounded-xl font-medium bg-white text-gray-900 text-base mt-2"
             >
               No thanks

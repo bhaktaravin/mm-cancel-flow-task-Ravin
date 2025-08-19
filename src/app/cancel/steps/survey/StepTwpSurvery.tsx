@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import type { StepProps } from "../../CancelFlow";
 
-export default function StepTwoSurvey({ form, setForm, nextStep, prevStep, isOpen, onClose }: StepProps) {
+export default function StepTwoSurvey({ form, setForm, nextStep, prevStep, onClose }: StepProps) {
   const [platformHelpfulness, setPlatformHelpfulness] = useState<string>(form.platformHelpfulness ?? "");
   const [comments, setComments] = useState<string>(form.platformComments ?? "");
 
@@ -17,8 +17,6 @@ export default function StepTwoSurvey({ form, setForm, nextStep, prevStep, isOpe
     }));
     nextStep();
   }
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"

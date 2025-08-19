@@ -3,12 +3,11 @@ import Image from "next/image";
 
 type Props = {
   nextStep: (data?: boolean) => void;
-  prevStep: () => void;
   isOpen: boolean;
   onClose: () => void;
 };
 
-export default function StepWithoutMM({ nextStep, prevStep, isOpen, onClose }: Props) {
+export default function StepWithoutMM({ nextStep, isOpen, onClose }: Omit<Props, "prevStep">) {
   if (!isOpen) return null;
 
   return (

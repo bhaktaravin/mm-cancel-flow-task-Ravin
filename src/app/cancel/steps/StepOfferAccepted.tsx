@@ -63,7 +63,7 @@ export default function StepJobSuggestions({ nextStep, isOpen, onClose }: Props)
                   lineHeight: "1.1",
                 }}
               >
-                Awesome — we’ve pulled together<br />
+                Awesome — we&apos;ve pulled together<br />
                 a few roles that seem like a great fit for you.
               </h2>
               <div className="mb-4 text-base text-gray-700 font-medium">
@@ -79,14 +79,14 @@ export default function StepJobSuggestions({ nextStep, isOpen, onClose }: Props)
                   </div>
                   <div>
                     <div className="font-bold text-lg text-[#222]">Automation Controls Engineer</div>
-                    <div className="text-xs text-gray-500">Randstad USA • Memphis, Tennessee</div>
+                    <div className="text-xs text-gray-500">Randstad USA &bull; Memphis, Tennessee</div>
                   </div>
                 </div>
                 {/* Job Tags */}
                 <div className="flex flex-wrap gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full text-xs bg-[#F3F4F6] text-[#111827] font-medium">Full Time</span>
                   <span className="px-3 py-1 rounded-full text-xs bg-[#F3F4F6] text-[#111827] font-medium">Associate</span>
-                  <span className="px-3 py-1 rounded-full text-xs bg-[#F3F4F6] text-[#111827] font-medium">Bachelor's</span>
+                  <span className="px-3 py-1 rounded-full text-xs bg-[#F3F4F6] text-[#111827] font-medium">Bachelor&apos;s</span>
                   <span className="px-3 py-1 rounded-full text-xs bg-[#F3F4F6] text-[#111827] font-medium">On-Site</span>
                 </div>
                 {/* Salary and badges */}
@@ -100,7 +100,7 @@ export default function StepJobSuggestions({ nextStep, isOpen, onClose }: Props)
                 </div>
                 {/* Description */}
                 <div className="text-xs text-gray-500 mb-2">
-                  The Electrical Automation Controls Engineer will design, implement, and maintain industrial automation systems, specializing in PLC programming using Siemens TIA Portal. The ideal candidate should have a bachelor's degree in Electrical engineering and at least 4 years of industrial automation experience. This role offers amazing growth and is ideal for someone seeking growth in a supportive company. Key benefits include comprehensive healthcare and retirement plans.
+                  The Electrical Automation Controls Engineer will design, implement, and maintain industrial automation systems, specializing in PLC programming using Siemens TIA Portal. The ideal candidate should have a bachelor&apos;s degree in Electrical engineering and at least 4 years of industrial automation experience. This role offers amazing growth and is ideal for someone seeking growth in a supportive company. Key benefits include comprehensive healthcare and retirement plans.
                 </div>
                 {/* Contact and actions */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 justify-between">

@@ -42,10 +42,10 @@ export default function StepFinal() {
           {/* Main Content */}
           <div className="space-y-4 mb-8">
             <h1 className="text-[28px] sm:text-[32px] font-semibold text-gray-900 leading-snug">
-              All done, your cancellation's been processed.
+              All done, your cancellation&apos;s been processed.
             </h1>
             <p className="text-[16px] text-gray-500 leading-relaxed">
-              We're stoked to hear you've landed a job and sorted your visa.
+              We&apos;re stoked to hear you&apos;ve landed a job and sorted your visa.
               <br />
               Big congrats from the team. 🙌
             </p>
