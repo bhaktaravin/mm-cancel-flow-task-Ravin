@@ -6,9 +6,10 @@ import Image from "next/image";
 type Props = {
   form: any;
   setForm: (fn: (prev: any) => any) => void;
-  nextStep: () => void;
+  nextStep: (form: any) => void;
   prevStep: () => void;
   onClose?: () => void;
+  isOpen: boolean;
 };
 
 export default function StepWishHelpedWithModal({
@@ -17,6 +18,7 @@ export default function StepWishHelpedWithModal({
   nextStep,
   prevStep,
   onClose,
+  isOpen
 }: Props) {
   const minChars = 25;
   const feedback = form.wishHelpedWith ?? "";
@@ -25,7 +27,7 @@ export default function StepWishHelpedWithModal({
 
   const handleContinue = () => {
     if (!canContinue) return;
-    nextStep();
+    nextStep({ ...form, wishHelpedWith: feedback });
   };
 
   return (
@@ -58,9 +60,10 @@ export default function StepWishHelpedWithModal({
           <div className="mb-2 relative">
             <textarea
               id="wishHelpedWith"
+              aria-label="What’s one thing you wish we could’ve helped you with?"
               className="w-full border border-gray-400 rounded-xl px-4 py-3 mb-2 text-lg resize-none"
               rows={5}
-              placeholder=""
+              placeholder="Type your feedback here..."
               value={feedback}
               onChange={e => setForm(f => ({ ...f, wishHelpedWith: e.target.value }))}
             />
@@ -72,7 +75,7 @@ export default function StepWishHelpedWithModal({
           <button
             className={`w-full py-3 rounded-xl font-bold text-lg bg-[#D4D3D0] text-[#B7B7B7] transition ${canContinue ? "bg-[#56C26A] text-white hover:bg-[#4DB05F] cursor-pointer" : "opacity-100 cursor-not-allowed"}`}
             disabled={!canContinue}
-            onClick={canContinue ? handleContinue : undefined}
+            onClick={handleContinue}
           >
             Continue
           </button>

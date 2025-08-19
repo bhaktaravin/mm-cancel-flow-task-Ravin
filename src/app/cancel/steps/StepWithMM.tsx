@@ -1,17 +1,40 @@
 import React, { useState } from "react";
 import Image from "next/image";
+import { FormType } from "../CancelFlow";
 
 type Props = {
+  form: FormType,
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
   prevStep: () => void;
   isOpen: boolean;
   onClose: () => void;
+  nextStep: (data: {
+    foundWithMigrateMate: "yes" | "no";
+    rolesApplied: string;
+    companiesEmailed: string;
+    companiesInterviewed: string;
+  }) => void;
 };
 
-export default function StepVisaLawyerHelp({ prevStep, isOpen, onClose }: Props) {
-  const [visaType, setVisaType] = useState("");
-  const [lawyerHelp, setLawyerHelp] = useState(true);
+export default function StepWithMM({ prevStep, isOpen, onClose, nextStep }: Props) {
+  const [foundWithMigrateMate, setFoundWithMigrateMate] = useState<"yes" | "no" | "">("");
+  const [rolesApplied, setRolesApplied] = useState("");
+  const [companiesEmailed, setCompaniesEmailed] = useState("");
+  const [companiesInterviewed, setCompaniesInterviewed] = useState("");
+
+  // Enable continue button only if all required fields are filled
+  const canContinue =
+    foundWithMigrateMate &&
+    rolesApplied &&
+    companiesEmailed &&
+    companiesInterviewed;
 
   if (!isOpen) return null;
+
+  const handleContinue = () => {
+    if (!canContinue) return;
+    nextStep({ foundWithMigrateMate, rolesApplied, companiesEmailed, companiesInterviewed });
+  };
 
   return (
     <div
@@ -28,32 +51,21 @@ export default function StepVisaLawyerHelp({ prevStep, isOpen, onClose }: Props)
           maxWidth: "1100px",
           maxHeight: "90vh",
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
-
         {/* Top Navigation */}
         <div className="flex items-center px-8 py-6 border-b border-gray-200">
           <button
             className="text-gray-600 font-medium text-lg flex items-center mr-4"
             onClick={prevStep}
-            style={{ fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif" }}
           >
             <span className="mr-2 text-xl">&#8592;</span> Back
           </button>
           <span className="font-medium text-lg flex-1 text-center"
-            style={{ color: "#4b5563", fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif"}}
+            style={{ color: "#4b5563" }}
           >
             Subscription Cancellation
           </span>
-          {/* Stepper */}
-          <div className="flex items-center gap-2 ml-auto">
-            <div className="flex items-center gap-1">
-              <span className="inline-block w-5 h-2 rounded-full bg-[#A3E3C7]" />
-              <span className="inline-block w-5 h-2 rounded-full bg-[#A3E3C7]" />
-              <span className="inline-block w-5 h-2 rounded-full bg-[#D9D9D9]" />
-            </div>
-            <span className="text-gray-500 text-base ml-3">Step 3 of 3</span>
-          </div>
           <button
             className="text-gray-400 hover:text-gray-600 text-2xl font-light ml-6"
             style={{ fontWeight: '300' }}
@@ -65,75 +77,96 @@ export default function StepVisaLawyerHelp({ prevStep, isOpen, onClose }: Props)
 
         {/* Main Content */}
         <div className="flex flex-col md:flex-row w-full flex-1 p-4 md:p-10 gap-8">
-          {/* Left Column */}
           <div className="w-full md:w-[55%] flex flex-col">
-            <div>
-              <h2
-                className="font-bold leading-tight mb-3 text-2xl md:text-4xl"
-                style={{
-                  color: "#111827",
-                  fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
-                  fontWeight: "700",
-                  lineHeight: "1.1",
-                }}
-              >
-                We helped you land the job, now let&apos;s <br className="hidden md:inline" />
-                help you secure your visa.
-              </h2>
-              <p
-                className="leading-relaxed text-base md:text-xl mb-4"
-                style={{
-                  color: "#6b7280",
-                  fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
-                  lineHeight: "1.5",
-                }}
-              >
-                Is your company providing an immigration lawyer to help with your visa?
-              </p>
-              {/* Radio Option */}
-              <div className="flex items-center my-3">
-                <input
-                  type="radio"
-                  checked={lawyerHelp}
-                  onChange={() => setLawyerHelp(true)}
-                  className="mr-3 accent-[#222]"
-                  id="lawyerHelpYes"
-                />
-                <label htmlFor="lawyerHelpYes" className="font-medium text-gray-800 text-lg">
+            <h2 className="font-bold leading-tight mb-3 text-2xl md:text-4xl">
+              Congrats on the new role! 🎉
+            </h2>
+            {/* Did you find this job with MigrateMate? */}
+            <div className="mb-4">
+              <div className="font-medium mb-2">Did you find this job with MigrateMate?*</div>
+              <div className="flex gap-4">
+                <button
+                  type="button"
+                  className={`px-4 py-2 rounded-xl border ${foundWithMigrateMate === "yes" ? "bg-[#56C26A] text-white" : "bg-gray-100 text-gray-700"}`}
+                  onClick={() => setFoundWithMigrateMate("yes")}
+                >
                   Yes
-                </label>
+                </button>
+                <button
+                  type="button"
+                  className={`px-4 py-2 rounded-xl border ${foundWithMigrateMate === "no" ? "bg-[#56C26A] text-white" : "bg-gray-100 text-gray-700"}`}
+                  onClick={() => setFoundWithMigrateMate("no")}
+                >
+                  No
+                </button>
               </div>
-              {/* Visa Type Input */}
-              <div className="mt-1 mb-6">
-                <label htmlFor="visaType" className="block text-base font-medium text-gray-700 mb-2">
-                  What visa will you be applying for?*
-                </label>
-                <input
-                  type="text"
-                  id="visaType"
-                  placeholder="Enter visa type..."
-                  value={visaType}
-                  onChange={e => setVisaType(e.target.value)}
-                  className="w-full border border-gray-400 rounded-xl px-4 py-3 text-base focus:outline-none focus:border-gray-700"
-                  style={{ fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif" }}
-                />
+            </div>
+            {/* How many roles did you apply for? */}
+            <div className="mb-4">
+              <div className="font-medium mb-2">How many roles did you apply for through Migrate Mate?*</div>
+              <div className="flex gap-2 flex-wrap">
+                {["0", "1-5", "6-20", "20+"].map(val => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`px-4 py-2 rounded-xl border ${rolesApplied === val ? "bg-[#56C26A] text-white" : "bg-gray-100 text-gray-700"}`}
+                    onClick={() => setRolesApplied(val)}
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* How many companies did you email directly? */}
+            <div className="mb-4">
+              <div className="font-medium mb-2">How many companies did you email directly?*</div>
+              <div className="flex gap-2 flex-wrap">
+                {["0", "1-5", "6-20", "20+"].map(val => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`px-4 py-2 rounded-xl border ${companiesEmailed === val ? "bg-[#56C26A] text-white" : "bg-gray-100 text-gray-700"}`}
+                    onClick={() => setCompaniesEmailed(val)}
+                  >
+                    {val}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* How many companies did you interview with? */}
+            <div className="mb-4">
+              <div className="font-medium mb-2">How many different companies did you interview with?*</div>
+              <div className="flex gap-2 flex-wrap">
+                {["0", "1-2", "3-5", "5+"].map(val => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`px-4 py-2 rounded-xl border ${companiesInterviewed === val ? "bg-[#56C26A] text-white" : "bg-gray-100 text-gray-700"}`}
+                    onClick={() => setCompaniesInterviewed(val)}
+                  >
+                    {val}
+                  </button>
+                ))}
               </div>
             </div>
             <button
-              className="w-full py-4 rounded-2xl font-semibold text-lg bg-[#EAEAEA] text-gray-400"
+              className={`w-full py-4 rounded-2xl font-semibold text-lg transition ${
+                canContinue
+                  ? "bg-[#56C26A] text-white hover:bg-[#4DB05F] cursor-pointer"
+                  : "bg-[#EAEAEA] text-gray-400 cursor-not-allowed"
+              }`}
+              disabled={!canContinue}
+              onClick={handleContinue}
               style={{
                 fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
                 fontWeight: "600",
                 borderRadius: "16px",
                 marginTop: "12px",
-                cursor: "not-allowed",
               }}
-              disabled
             >
-              Complete cancellation
+              Continue
             </button>
           </div>
-
           {/* Right Column - Image */}
           <div className="w-full md:w-[45%] flex items-center justify-center mb-4 md:mb-0">
             <Image

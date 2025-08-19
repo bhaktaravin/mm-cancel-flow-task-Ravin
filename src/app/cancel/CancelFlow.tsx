@@ -111,7 +111,7 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
     else if (step === "survey3") setStep("survey2");
     else if (step === "reason") setStep("survey3");
     else if (step === "reasonModal") setStep("reason");
-    else if (step === "end" && form.gotJob) setStep("visa");
+    else if (step === "end" && form.gotJob) setStep("acceptance");
     else if (step === "end") setStep("reasonModal");
   }
 
@@ -188,9 +188,37 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
     setStep("wish_helped_with");
   }
 
-  function handleWishHelpedWithNext(form: FormType): void {
-    setForm(form);
-    console.log("form", form);
+
+
+
+  function handleWishHelpedWithNext(updatedForm: FormType) {
+    setForm(updatedForm);
+    console.log("form", form.foundWithMM);
+
+    if(form.gotJob) {
+      setStep("with_mm");
+    }
+    else if(!form.gotJob) {
+      setStep("without_mm");
+    }
+  }
+
+  function handleWithMMNext(visaForm: FormType) {
+    setForm(visaForm);
+    console.log("Visa Form: ", visaForm);
+
+  }
+
+  function handleWithoutMMNext(){
+
+  }
+
+  function handleVisaHelpNext(){
+    
+  }
+
+  function handleVisaNoHelpNext(){
+    
   }
 
   return (
@@ -211,7 +239,6 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             onClose={onClose}
           />
         )}
-        console.log("Current step:", step);
 
         {step === "acceptance" && (
 
@@ -239,9 +266,10 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
           <StepWishHelpedWithModal
             form={form}
             setForm={setForm}
-            nextStep={() => handleWishHelpedWithNext(form)}
+            nextStep={handleWishHelpedWithNext}
             prevStep={handlePrevStep}
             onClose={onClose}
+            isOpen={true}
           />
         )}
         {step === "with_mm" && (
@@ -249,18 +277,17 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             form={form}
             setForm={setForm}
             nextStep={handleWithMMNext}
-            prevStep={handlePrevStep}
+            prevStep={handlePrevStep} 
             onClose={onClose}
-          />
+             isOpen={true}          />
         )}
         {step === "without_mm" && (
           <StepWithoutMM
             form={form}
             setForm={setForm}
             nextStep={handleWithoutMMNext}
-            prevStep={handlePrevStep}
-            onClose={onClose}
-          />
+            onClose={onClose} 
+            isOpen={true}          />
         )}
 
         { step === "visa_help" && (

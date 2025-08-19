@@ -1,7 +1,10 @@
 import React from "react";
 import Image from "next/image";
+import { FormType } from "../CancelFlow";
 
 type Props = {
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
   nextStep: (data?: boolean) => void;
   isOpen: boolean;
   onClose: () => void;

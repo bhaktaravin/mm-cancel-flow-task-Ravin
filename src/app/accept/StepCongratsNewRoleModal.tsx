@@ -6,7 +6,7 @@ import Image from "next/image";
 type Props = {
   form: any;
   setForm: (fn: (prev: any) => any) => void;
-  nextStep: () => void;
+  nextStep: (updatedForm: any) => void; // <-- FIXED
   prevStep: () => void;
   onClose?: () => void;
 };
@@ -36,14 +36,15 @@ export default function StepCongratsNewRoleModal({
 
   const handleContinue = () => {
     if (!canContinue) return;
-    setForm(f => ({
-      ...f,
+    const updatedForm = {
+      ...form,
       foundWithMigrateMate,
       rolesApplied,
       companiesEmailed,
       companiesInterviewed,
-    }));
-    nextStep();
+    };
+    setForm(() => updatedForm);
+    nextStep(updatedForm); // <-- Pass updated answers!
   };
 
   return (
@@ -146,7 +147,7 @@ export default function StepCongratsNewRoleModal({
 
           <button
             className={`w-full py-3 rounded-xl font-bold text-lg bg-[#56C26A] text-white transition ${canContinue ? "" : "opacity-50 cursor-not-allowed"}`}
-            disabled={!canContinue}
+            disabled={!canContinue} // <-- FIXED
             onClick={canContinue ? handleContinue : undefined}
           >
             Continue
