@@ -12,6 +12,7 @@ export default function StepJobQuestion({
 }: StepProps) {
   // Handler for answer
   function handleAnswer(answer: boolean) {
+    console.log(answer);
     nextStep(answer);
   }
 
@@ -22,7 +23,6 @@ export default function StepJobQuestion({
         backgroundColor: "rgba(0, 0, 0, 0.5)",
         fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif"
       }}
-      // NO onClick={onClose} here!
     >
       <div
         className="bg-white rounded-[24px] shadow-xl w-full overflow-hidden flex flex-col"
