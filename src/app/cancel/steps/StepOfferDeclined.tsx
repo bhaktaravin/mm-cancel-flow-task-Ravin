@@ -1,63 +1,112 @@
 import React from "react";
 import Image from "next/image";
 
-export default function StepOfferDeclined({ nextStep, form }: { nextStep: () => void, form: { gotJob?: boolean | null } }) {
+type Props = {
+  nextStep: () => void;
+  form: { gotJob?: boolean | null };
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export default function StepOfferDeclined({ nextStep, form, isOpen, onClose }: Props) {
+  if (!isOpen) return null;
+
   return (
-    <div className="max-w-[1200px] mx-auto bg-white rounded-2xl shadow-lg flex flex-col md:flex-row items-stretch overflow-hidden">
-      <div className="flex-1 flex flex-col justify-between p-6 md:p-12 relative">
-        {/* Header & Progress */}
-        <div className="flex items-center justify-between mb-6 md:mb-8">
-          <div className="flex items-center gap-3 text-xs md:text-sm font-medium">
-            <span className="bg-[#f7f7a1] text-gray-900 px-3 py-1 rounded-md">
-              Subscription <span className="font-bold">Cancelled</span>
-            </span>
-            <span className="text-green-600">●●● Completed</span>
-          </div>
-          <button className="text-gray-400 hover:text-gray-600 text-xl md:text-2xl">×</button>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
+      }}
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-[24px] shadow-xl w-full overflow-hidden flex flex-col"
+        style={{
+          maxWidth: "900px",
+          maxHeight: "90vh",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-center px-8 py-6 border-b border-gray-200 relative">
+          <span
+            className="font-medium text-lg"
+            style={{
+              color: "#4b5563",
+              fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
+            }}
+          >
+            Subscription
+          </span>
+          <button
+            className="absolute right-8 text-gray-400 hover:text-gray-600 text-2xl font-light"
+            style={{ fontWeight: "300" }}
+            onClick={onClose}
+          >
+            ×
+          </button>
         </div>
+
         {/* Main Content */}
-        <div className="mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold mb-4 md:mb-6 text-gray-900 leading-tight">
-            All done, your <span className="bg-yellow-200 px-2 py-1 rounded-md">cancellation</span>&rsquo;s been processed.
-          </h2>
-          <p className="text-gray-700 text-base md:text-xl mt-4">
-            {form.gotJob 
-              ? "We're stoked to hear you've landed a job and sorted your visa. Big congrats from the team 🙌"
-              : "We're sorry to see you go! Wishing you the best of luck with your job search 🌟"}
-          </p>
-          <div className="flex items-center gap-4 mt-8 relative z-10">
-            <div className="w-12 h-12 md:w-16 md:h-16 relative">
-              <Image 
-                src="/mihailo-profile.jpeg" 
-                alt="Profile picture" 
-                fill
-                sizes="(max-width: 768px) 48px, 64px"
-                className="rounded-full object-cover"
-                priority
-              />
-            </div>
+        <div className="flex flex-col md:flex-row w-full flex-1 p-4 md:p-10 gap-8">
+          {/* Left Column */}
+          <div className="w-full md:w-[55%] flex flex-col justify-between">
             <div>
-              <p className="font-medium text-gray-900 text-base md:text-lg">Mihailo</p>
-              <p className="text-sm md:text-base text-gray-500">Product Lead</p>
+              <h2
+                className="font-bold leading-tight mb-3 text-2xl md:text-3xl"
+                style={{
+                  color: "#111827",
+                  fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
+                  fontWeight: "700",
+                  lineHeight: "1.1",
+                }}
+              >
+                Great choice, mate!
+              </h2>
+              <div className="mb-3 text-2xl md:text-2xl font-semibold" style={{ color: "#222" }}>
+                You're still on the path to your dream role.{" "}
+                <span style={{ color: "#8952fc" }}>Let’s make it happen together!</span>
+              </div>
+              <div className="mb-2 text-base text-gray-700 font-medium">
+                You've got XX days left on your current plan.<br />
+                Starting from XX date, your monthly payment will be <span className="font-bold">$12.50</span>.
+              </div>
+              <div className="mb-6 text-xs text-gray-500 italic">
+                You can cancel anytime before then.
+              </div>
             </div>
+            <button
+              onClick={nextStep}
+              className="w-full py-4 rounded-2xl font-semibold text-lg bg-[#8952fc] text-white transition-colors"
+              style={{
+                fontFamily: "'Inter', 'Montserrat', Arial, Helvetica, sans-serif",
+                fontWeight: "600",
+                borderRadius: "16px",
+                marginTop: "12px",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#7b40fc";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#8952fc";
+              }}
+            >
+              Land your dream role
+            </button>
+          </div>
+          {/* Right Column - Image */}
+          <div className="w-full md:w-[45%] flex items-center justify-center mb-4 md:mb-0">
+            <Image
+              src="/empire-state-compressed.jpg"
+              alt="Empire State Building"
+              width={500}
+              height={320}
+              className="w-full h-auto object-cover shadow-lg rounded-[24px]"
+              priority
+            />
           </div>
         </div>
-        {/* Button */}
-        <button
-          onClick={nextStep}
-          className="w-full py-4 md:py-5 bg-[#8952fc] text-white rounded-xl font-semibold text-lg md:text-xl shadow-lg hover:bg-[#7b40fc] transition-colors"
-        >
-          Finish
-        </button>
-      </div>
-      <div className="flex-shrink-0 flex items-center justify-center bg-gray-50 p-6 md:p-0">
-        <Image
-          src="/empire-state-compressed.jpg"
-          alt="Empire State Building"
-          width={320}
-          height={180}
-          className="rounded-xl object-cover shadow"
-        />
       </div>
     </div>
   );

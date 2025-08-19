@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { FormType } from "../CancelFlow";
+import type {FormType}  from "../CancelFlow";
 type Props = {
   form: FormType;
   nextStep: () => void;

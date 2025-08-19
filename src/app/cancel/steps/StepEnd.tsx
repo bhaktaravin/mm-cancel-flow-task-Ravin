@@ -1,69 +1,92 @@
-'use client';
+"use client";
+import React from "react";
+import type { StepProps } from "../CancelFlow"; // import the shared props type
 
-import React from 'react';
-import Image from 'next/image';
+export default function StepEnd({
+  form,
+  setForm,
+  nextStep,
+  prevStep,
+  isOpen = true,
+  onClose,
+}: StepProps) {
+  if (!isOpen) return null;
 
-type Props = {
-  form?: {
-    gotJob?: boolean;
-  };
-  nextStep?: () => void;
-};
+  // You can use data from form if needed, e.g. end date
+  const endDate = form?.endDate || "XX date";
 
-const StepEnd: React.FC<Props> = ({ form = {}, nextStep = () => {} }) => {
   return (
-    <div className="w-full max-w-[460px] md:max-w-[800px] mx-auto">
-      <div className="bg-white rounded-xl md:rounded-3xl shadow-lg overflow-hidden">
-        <div className="flex flex-col md:flex-row">
-          {/* Content Section */}
-          <div className="flex-1 p-6 md:p-8">
-            {/* Header & Progress */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[#1D1D1F] text-sm md:text-[15px]">Subscription Cancelled</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-[#00A67E] text-base md:text-xl leading-none">●●●</span>
-                  <span className="text-[#00A67E] text-sm md:text-[15px]">Completed</span>
-                </div>
-              </div>
-              <button className="text-[#98989A] hover:text-gray-600 text-xl md:text-2xl">×</button>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.15)" }}
+    >
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl flex flex-col p-0 overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-2">
+          <button
+            className="text-gray-500 font-medium"
+            onClick={() => prevStep?.()}
+          >
+            &larr; Back
+          </button>
+          <div className="flex-1 flex flex-col items-center">
+            <span className="font-semibold text-gray-800 text-lg">
+              Subscription Cancelled
+            </span>
+            <div className="flex items-center mt-1">
+              {/* Progress bar - 3 steps, all green */}
+              <div className="h-2 w-6 rounded bg-green-400 mx-0.5"></div>
+              <div className="h-2 w-6 rounded bg-green-400 mx-0.5"></div>
+              <div className="h-2 w-6 rounded bg-green-400 mx-0.5"></div>
+              <span className="ml-2 text-green-600 font-medium text-sm">
+                Completed
+              </span>
             </div>
-
-            {/* Content */}
-            <div className="space-y-4 mb-6 md:mb-8">
-              <h1 className="text-[22px] md:text-[40px] font-bold text-[#1D1D1F] leading-tight">
-                All done, your cancellation&rsquo;s been processed.
-              </h1>
-              <p className="text-sm md:text-[18px] text-[#1D1D1F]">
-                {form.gotJob 
-                  ? "We're stoked to hear you've landed a job and sorted your visa. Big congrats from the team 🙌"
-                  : "We're sorry to see you go! Wishing you the best of luck with your job search ✨"}
-              </p>
-            </div>
-
-            {/* Button */}
+          </div>
+          <button
+            className="text-gray-400 text-2xl font-bold"
+            aria-label="Close"
+            onClick={() => onClose?.()}
+          >
+            &times;
+          </button>
+        </div>
+        {/* Content */}
+        <div className="flex flex-row items-stretch px-6 pt-4 pb-6">
+          {/* Left */}
+          <div className="flex-1 pr-6 flex flex-col justify-center">
+            <h2 className="text-3xl font-bold mb-3 text-gray-900">
+              Sorry to see you go, mate.
+            </h2>
+            <h3 className="text-xl font-semibold mb-3 text-gray-800">
+              Thanks for being with us, and you’re always welcome back.
+            </h3>
+            <p className="text-gray-600 text-base mb-2">
+              Your subscription is set to end on <span className="font-semibold">{endDate}</span>.<br />
+              You’ll still have full access until then. No further charges after that.
+            </p>
+            <p className="text-gray-500 text-sm mb-4">
+              Changed your mind? You can reactivate anytime before your end date.
+            </p>
             <button
-              onClick={nextStep}
-              className="w-full md:w-64 py-2.5 md:py-4 bg-[#8952FC] text-white rounded-lg md:rounded-xl font-medium text-sm md:text-[16px] hover:bg-[#7b40fc] transition-colors"
+              className="w-full py-3 rounded-xl font-bold text-lg bg-[#7C5CFA] text-white mt-2"
+              style={{ borderRadius: "10px" }}
+              onClick={() => window.location.href = "/jobs"}
             >
-              Finish
+              Back to Jobs
             </button>
           </div>
-
-          {/* Image Section */}
-          <div className="w-full md:w-[400px] h-[180px] md:h-auto relative bg-[#F5F5F7] md:bg-transparent">
-            <Image
-              src={form.gotJob ? "/empire-state-compressed.jpg" : "/window.svg"}
-              alt={form.gotJob ? "Empire State Building" : "Window illustration"}
-              fill
-              className="object-contain md:object-cover p-2 md:p-0"
-              priority
+          {/* Right */}
+          <div className="w-[300px] flex-shrink-0 rounded-xl overflow-hidden shadow-md">
+            <img
+              src="https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=600&q=80"
+              alt="NYC Skyline"
+              className="w-full h-full object-cover"
+              style={{ minHeight: "220px", maxHeight: "240px" }}
             />
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default StepEnd;
+}

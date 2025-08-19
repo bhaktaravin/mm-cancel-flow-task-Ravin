@@ -1,115 +1,227 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import React, { useState } from "react";
 import StepJobQuestion from "./steps/StepJobQuestion";
-import StepVisaHelp from "./steps/StepVisaHelp";
-import StepWithMM from "./steps/StepWithMM";
-import StepWithoutMM from "./steps/StepWithoutMM";
 import StepOffer from "./steps/StepOffer";
-import StepOfferAccepted from "./steps/StepOfferAccepted";
-import StepOfferDeclined from "./steps/StepOfferDeclined";
-import StepError from "./steps/StepError";
-import StepTeamMemberCard from "./steps/StepTeamMemberCard";
+import StepOneSurvey from "./steps/survey/StepOneSurvery";
+import StepTwoSurvey from "./steps/survey/StepTwpSurvery";
+import StepThreeSurvey from "./steps/survey/StepThreeSurvery";
+import ReasonTooExpensiveModal from "./steps/reasons/ReasonTooExpensiveModal";
+import ReasonPlatformNotHelpfulModal from "./steps/reasons/ReasonPlatformNotHelpful";
+import ReasonNotEnoughJobsModal from "./steps/reasons/ReasonsNotEnoughJobsModal";
+import ReasonDecidedNotToMoveModal from "./steps/reasons/ReasonDecidedNotToMoveModal";
+import ReasonOtherModal from "./steps/reasons/ReasonOtherModal";
 import StepEnd from "./steps/StepEnd";
 
 export type FormType = {
-  reason: string;
-  downsellVariant: "A" | "B" | null;
-  acceptedDownsell: boolean | null;
-  gotJob?: boolean | null;
-  visaHelp?: boolean | null;
-  withMM?: boolean | null;
-  offerAccepted?: boolean | null;
-  error?: boolean;
+  reasonSelected?: string;
+  reason?: string;
+  platformFeedback?: string;
+  notEnoughJobsFeedback?: string;
+  decidedNotToMoveFeedback?: string;
+  otherFeedback?: string;
+  tooExpensiveMaxPrice?: string;
+  surveyApply?: string;
+  surveyEmail?: string;
+  surveyInterview?: string;
+  platformHelpfulness?: string;
+  platformComments?: string;
+  endDate?: string;
 };
 
-type StepProps = {
-  nextStep: (data?: boolean) => void;
+export type StepProps = {
+  nextStep: (data?: any) => void;
   prevStep: () => void;
-  form?: FormType;
-  setForm?: React.Dispatch<React.SetStateAction<FormType>>;
+  form: FormType;
+  setForm: React.Dispatch<React.SetStateAction<FormType>>;
+  isOpen: boolean;
+  onClose?: () => void;
 };
-
-const steps = [
-  StepJobQuestion as React.ComponentType<StepProps>,      // 0
-  StepVisaHelp as React.ComponentType<StepProps>,         // 1
-  StepWithMM as React.ComponentType<StepProps>,           // 2
-  StepWithoutMM as React.ComponentType<StepProps>,        // 3
-  StepOffer as React.ComponentType<StepProps>,            // 4
-  StepOfferAccepted as React.ComponentType<StepProps>,    // 5
-  StepOfferDeclined as React.ComponentType<StepProps>,    // 6
-  StepTeamMemberCard as React.ComponentType<StepProps>,   // 7
-  StepError as React.ComponentType<StepProps>,            // 8
-  StepEnd as React.ComponentType<StepProps>               // 9
-];
-
 
 export default function CancelFlow() {
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState<FormType>({
-    reason: '',
-    downsellVariant: null,
-    acceptedDownsell: null,
-    gotJob: null,
-    visaHelp: null,
-    withMM: null,
-    offerAccepted: null,
-    error: false
-  });
+  const [form, setForm] = useState<FormType>({});
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
-  // Navigation logic for branching
-  const nextStep = (data?: boolean) => {
-    if (step === 0) { // Job question
-      const hasJob = Boolean(data);
-      setForm(prev => ({ ...prev, gotJob: hasJob }));
-      setStep(hasJob ? 1 : 4); // If no job, skip to offer
-    } else if (step === 1) { // Visa help (only shown if they got a job)
-      setForm(prev => ({ ...prev, visaHelp: data }));
-      setStep(data ? 2 : 3);
-    } else if (step === 2) { // WithMM
-      setForm(prev => ({ ...prev, withMM: data }));
-      setStep(4);
-    } else if (step === 3) { // WithoutMM
-      setForm(prev => ({ ...prev, withMM: data }));
-      setStep(4);
-    } else if (step === 4) { // Offer
-      setForm(prev => ({ ...prev, offerAccepted: data }));
-      setStep(data ? 5 : 6);
-    } else if (step === 6) { // OfferDeclined
-      // Skip team member card if user didn't get a job (which means they didn't get visa help)
-      const skipToEnd = !form.gotJob || !form.visaHelp;
-      setStep(skipToEnd ? 9 : 7);
-    } else if (step === 7) { // TeamMemberCard
-      setStep(9);
-    } else if (step === 8) { // Error
-      setStep(0);
+  function nextStep(data?: any) {
+    setStep((prev) => prev + 1);
+    if (data) setForm((f: FormType) => ({ ...f, ...data }));
+  }
+  function prevStep() {
+    setStep((prev) => Math.max(prev - 1, 0));
+  }
+  function closeModal() {
+    setIsModalOpen(false);
+  }
+
+  let ReasonModalComponent: React.FC<StepProps> | null = null;
+  if (step === 6) {
+    switch (form.reasonSelected) {
+      case "too_expensive":
+        ReasonModalComponent = ReasonTooExpensiveModal;
+        break;
+      case "platform_not_helpful":
+        ReasonModalComponent = ReasonPlatformNotHelpfulModal;
+        break;
+      case "not_enough_jobs":
+        ReasonModalComponent = ReasonNotEnoughJobsModal;
+        break;
+      case "decided_not_to_move":
+        ReasonModalComponent = ReasonDecidedNotToMoveModal;
+        break;
+      case "other":
+        ReasonModalComponent = ReasonOtherModal;
+        break;
+      default:
+        ReasonModalComponent = null;
     }
-  };
-
-  const prevStep = () => {
-    setStep((s) => Math.max(s - 1, 0));
-  };
-
-  const StepComponent = steps[step];
-
-  // List of step indices that need form and setForm props
-  const stepsWithForm = [4, 5, 6, 7, 9]; // Offer, OfferAccepted, OfferDeclined, TeamMemberCard, End
-
-  const props: StepProps = stepsWithForm.includes(step)
-    ? {
-        form,
-        setForm,
-        nextStep,
-        prevStep,
-      }
-    : {
-        nextStep,
-        prevStep,
-      };
+  }
 
   return (
-    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow">
-      <StepComponent {...props} />
-    </div>
+    <>
+      {/* Step 0: Job Question */}
+      {step === 0 && (
+        <StepJobQuestion
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 1: Offer */}
+      {step === 1 && (
+        <StepOffer
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 2: Survey 1 */}
+      {step === 2 && (
+        <StepOneSurvey
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 3: Survey 2 */}
+      {step === 3 && (
+        <StepTwoSurvey
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 4: Survey 3 */}
+      {step === 4 && (
+        <StepThreeSurvey
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 5: Reason selection UI */}
+      {step === 5 && (
+        <div className="flex flex-col items-center justify-center p-6">
+          <h2 className="text-2xl font-bold mb-4">Why are you cancelling?</h2>
+          <div className="flex flex-col gap-3 w-full max-w-md">
+            <button
+              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
+              onClick={() => {
+                setForm((f: FormType) => ({ ...f, reasonSelected: "too_expensive" }));
+                nextStep();
+              }}
+            >
+              Too expensive
+            </button>
+            <button
+              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
+              onClick={() => {
+                setForm((f: FormType) => ({ ...f, reasonSelected: "platform_not_helpful" }));
+                nextStep();
+              }}
+            >
+              Platform not helpful
+            </button>
+            <button
+              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
+              onClick={() => {
+                setForm((f: FormType) => ({ ...f, reasonSelected: "not_enough_jobs" }));
+                nextStep();
+              }}
+            >
+              Not enough relevant jobs
+            </button>
+            <button
+              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
+              onClick={() => {
+                setForm((f: FormType) => ({ ...f, reasonSelected: "decided_not_to_move" }));
+                nextStep();
+              }}
+            >
+              Decided not to move
+            </button>
+            <button
+              className="py-3 px-4 bg-gray-100 rounded-lg text-left"
+              onClick={() => {
+                setForm((f: FormType) => ({ ...f, reasonSelected: "other" }));
+                nextStep();
+              }}
+            >
+              Other
+            </button>
+          </div>
+          <button
+            className="mt-6 text-gray-500 underline"
+            onClick={prevStep}
+          >
+            &larr; Back
+          </button>
+        </div>
+      )}
+
+      {/* Step 6: Reason modal */}
+      {step === 6 && ReasonModalComponent && (
+        <ReasonModalComponent
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+
+      {/* Step 7: Done/End */}
+      {step === 7 && (
+        <StepEnd
+          form={form}
+          setForm={setForm}
+          nextStep={nextStep}
+          prevStep={prevStep}
+          isOpen={isModalOpen}
+          onClose={closeModal}
+        />
+      )}
+    </>
   );
 }
