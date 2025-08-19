@@ -24,7 +24,7 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
         style={{ 
           boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
           maxWidth: '900px',
-          height: '300px',
+          minHeight: '300px',
           maxHeight: '90vh'
         }}
         onClick={(e) => e.stopPropagation()}
@@ -45,6 +45,14 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
           >
             Subscription Cancelled
           </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div style={{ width: 16, height: 8, background: "#34D399", borderRadius: 4, marginRight: 2 }} />
+            <div style={{ width: 16, height: 8, background: "#34D399", borderRadius: 4, marginRight: 2 }} />
+            <div style={{ width: 16, height: 8, background: "#34D399", borderRadius: 4, marginRight: 2 }} />
+            <span style={{ fontSize: "14px", color: "#6B7280", marginLeft: 4 }}>
+              Completed
+            </span>
+          </div>
           <button 
             className="text-gray-400 hover:text-gray-600 text-lg font-light"
             style={{ 
@@ -60,89 +68,86 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
 
         {/* Content */}
         <div className="flex h-full">
-          {/* Left Column - Text and Buttons */}
+          {/* Left Column - Text and Card */}
           <div 
-            className="p-6"
+            className="p-8"
             style={{ 
               width: '55%',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between'
+              justifyContent: 'center',
+              height: '100%',
             }}
           >
-            <div className="space-y-4">
-              {/* Main Content */}
-              <div>
-                <h2 
-                  className="font-semibold leading-tight mb-3"
-                  style={{ 
-                    fontSize: '24px',
-                    color: '#111827',
-                    fontFamily: 'Arial, Helvetica, sans-serif',
-                    fontWeight: '600',
-                    lineHeight: '1.1'
+            <div>
+              <h2 
+                className="font-semibold leading-tight mb-3"
+                style={{ 
+                  fontSize: '28px',
+                  color: '#111827',
+                  fontFamily: 'Arial, Helvetica, sans-serif',
+                  fontWeight: '600',
+                  lineHeight: '1.2',
+                  marginBottom: '18px'
+                }}
+              >
+                Your cancellation&apos;s all sorted, mate,<br />
+                no more charges.
+              </h2>
+              <div
+                style={{
+                  background: "#F3F4F6",
+                  borderRadius: "16px",
+                  padding: "20px 18px",
+                  marginBottom: "32px",
+                  marginTop: "8px",
+                  display: "flex",
+                  gap: "16px",
+                  alignItems: "flex-start",
+                }}
+              >
+                <Image
+                  src="/mihailo-profile.jpeg"
+                  alt="Mihailo Bozic"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover border border-gray-200"
+                  style={{
+                    marginRight: "8px"
                   }}
-                >
-                  Your{" "}
-                  <span 
-                    style={{ 
-                      backgroundColor: '#fef3c7',
-                      padding: '2px 4px',
-                      borderRadius: '4px'
+                />
+                <div>
+                  <span
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: "15px",
+                      color: "#111827",
                     }}
                   >
-                    cancellation
-                  </span>{" "}
-                  &apos;s all sorted, mate, no more charges.
-                </h2>
-                <div className="flex items-center gap-3 mt-3">
-                  <Image
-                    src="/mihailo-profile.jpeg"
-                    alt="Mihailo Bexic"
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover border border-gray-200"
-                  />
-                  <div>
-                    <div 
-                      style={{ 
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#111827',
-                        fontFamily: 'Arial, Helvetica, sans-serif'
-                      }}
-                    >
-                      Mihailo Bexic
-                    </div>
-                    <div 
-                      style={{ 
-                        fontSize: '12px',
-                        color: '#6b7280',
-                        fontFamily: 'Arial, Helvetica, sans-serif'
-                      }}
-                    >
-                      mihailo@migratemate.co
-                    </div>
-                  </div>
+                    Mihailo Bozic
+                  </span>
+                  <br />
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      color: "#6B7280",
+                    }}
+                  >
+                    mihailo@migratemate.co
+                  </span>
+                  <br />
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      color: "#111827",
+                    }}
+                  >
+                    I&apos;ll be reaching out soon to help with the visa side of things.<br />
+                    We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.<br />
+                    Keep an eye on your inbox, I&apos;ll be in touch <a href="#" style={{ color: "#8952fc", textDecoration: "underline" }}>shortly</a>.
+                  </span>
                 </div>
-                <p 
-                  className="leading-relaxed mt-3"
-                  style={{ 
-                    fontSize: '12px',
-                    color: '#6b7280',
-                    fontFamily: 'Arial, Helvetica, sans-serif',
-                    lineHeight: '1.5'
-                  }}
-                >
-                  I&apos;ll be reaching out soon to help with the visa side of things.<br />
-                  We&apos;ve got your back, whether it&apos;s questions, paperwork, or just figuring out your options.<br />
-                  Keep an eye on your inbox, I&apos;ll be in touch shortly.
-                </p>
               </div>
-            </div>
-
-            {/* Button */}
-            <div className="pt-4">
               <button
                 onClick={nextStep}
                 className="w-full py-3 border rounded-2xl font-medium transition-colors"
@@ -150,12 +155,13 @@ export default function StepTeamMemberCard({ nextStep, isOpen, onClose }: Props)
                   borderColor: '#8952fc',
                   backgroundColor: '#8952fc',
                   color: '#ffffff',
-                  fontSize: '14px',
+                  fontSize: '16px',
                   fontFamily: 'Arial, Helvetica, sans-serif',
-                  fontWeight: '500',
+                  fontWeight: '600',
                   borderRadius: '16px',
                   paddingTop: '12px',
-                  paddingBottom: '12px'
+                  paddingBottom: '12px',
+                  marginTop: '12px'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#7b40fc';

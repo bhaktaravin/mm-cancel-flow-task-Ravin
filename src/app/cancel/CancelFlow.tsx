@@ -3,14 +3,13 @@
 import React, { useState } from "react";
 
 import StepJobQuestion from "./steps/StepJobQuestion";
-import AcceptionFlow from "@/app/accept/AcceptionFlow"; // <-- new step
+import AcceptionFlow from "@/app/accept/AcceptionFlow";
 import StepOffer from "./steps/StepOffer";
 import StepOneSurvery from "./steps/survey/StepOneSurvery";
 import StepTwpSurvery from "./steps/survey/StepTwpSurvery";
 import StepThreeSurvery from "./steps/survey/StepThreeSurvery";
 import StepReason from "./steps/StepReason";
 import StepEnd from "./steps/StepEnd";
-
 import ReasonTooExpensiveModal from "./steps/reasons/ReasonTooExpensiveModal";
 import ReasonPlatformNotHelpful from "./steps/reasons/ReasonPlatformNotHelpful";
 import ReasonsNotEnoughJobsModal from "./steps/reasons/ReasonsNotEnoughJobsModal";
@@ -23,13 +22,20 @@ import NoVisaProcessCancelled from "../accept/NoVisaProcessCancelled";
 import StepWithoutMM from "./steps/StepWithoutMM";
 import VisaHelp from "../accept/NoStepVisaHelp";
 import VisaNoHelp from "./steps/StepYesVisa";
+import CancellationSortedModal from "./steps/StepTeamMemberCard"; // <<-- Add this import
+import StepTeamMemberCard from "./steps/StepTeamMemberCard";
 
-// ---- TYPES ----
 export type FormType = {
   gotJob?: boolean;
   offerAccepted?: boolean;
   surveyAnswers?: string[];
   reason?: string;
+  foundWithMigrateMate?: string;
+  rolesApplied?: string;
+  companiesEmailed?: string;
+  companiesInterviewed?: string;
+  companyProvidesLawyer?: boolean;
+  visaType?: string;
   [key: string]: any;
 };
 
@@ -48,71 +54,79 @@ type CancelFlowProps = {
   onClose: () => void;
 };
 
+type StepName =
+  | "job"
+  | "acceptance"
+  | "congrats"
+  | "wish_helped_with"
+  | "with_mm"
+  | "without_mm"
+  | "visa_help"
+  | "visa_no_help"
+  | "no_visa_process_cancelled"
+  | "yes_visa_process_cancelled"
+  | "offer"
+  | "survey1"
+  | "survey2"
+  | "survey3"
+  | "reason"
+  | "reasonModal"
+  | "cancellation_sorted" // <<-- Add this
+  | "end";
+
 export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
-  const [step, setStep] = useState<
-    | "job"
-    | "acceptance"
-    | "congrats"
-    | "wish_helped_with"
-    | "with_mm"
-    | "without_mm"
-    | "visa_help"
-    | "visa_no_help"
-    | "no_visa_process_cancelled"
-    | "yes_visa_process_cancelled"
-    | "offer"
-    | "survey1"
-    | "survey2"
-    | "survey3"
-    | "reason"
-    | "reasonModal"
-    | "end"
-  >("job");
+  const [step, setStep] = useState<StepName>("job");
+  const [previousStep, setPreviousStep] = useState<StepName | null>(null);
   const [form, setForm] = useState<FormType>({ surveyAnswers: [] });
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
 
+  function goToStep(nextStep: StepName) {
+    setPreviousStep(step);
+    setStep(nextStep);
+  }
+
   function handleJobAnswer(gotJob: boolean) {
     setForm(f => ({ ...f, gotJob }));
-    if (gotJob) {
-      console.log('handleJobAnswer called with', gotJob);
-      setStep("acceptance"); // Show AcceptionFlow
-    } else {
-      setStep("offer");
-    }
-  }  
+    goToStep(gotJob ? "acceptance" : "offer");
+  }
+
   function handleOfferChoice(accepted: boolean) {
     setForm(f => ({ ...f, offerAccepted: accepted }));
-    setStep("survey1");
+    goToStep("survey1");
   }
+
   function handleSurveyAnswer(answer: string) {
     setForm(f => ({
       ...f,
       surveyAnswers: [...(f.surveyAnswers || []), answer],
     }));
-    if (step === "survey1") setStep("survey2");
-    else if (step === "survey2") setStep("survey3");
-    else if (step === "survey3") setStep("reason");
+    if (step === "survey1") goToStep("survey2");
+    else if (step === "survey2") goToStep("survey3");
+    else if (step === "survey3") goToStep("reason");
   }
+
   function handleReasonNextStep(reason: string) {
     setForm(f => ({ ...f, reason }));
     setSelectedReason(reason);
-    setStep("reasonModal");
+    goToStep("reasonModal");
   }
+
   function handleReasonModalDone(data?: any) {
     if (data) setForm(f => ({ ...f, ...data }));
-    setStep("end");
+    goToStep("end");
   }
+
   function handlePrevStep() {
-    if (step === "acceptance") setStep("job");
-    else if (step === "job") setStep("acceptance");
-    else if (step === "offer") setStep("job");
-    else if (step === "survey1") setStep("offer");
-    else if (step === "survey2") setStep("survey1");
-    else if (step === "survey3") setStep("survey2");
-    else if (step === "reason") setStep("survey3");
-    else if (step === "reasonModal") setStep("reason");
-    else if (step === "end" && form.gotJob) setStep("acceptance");
-    else if (step === "end") setStep("reasonModal");
+    if (step === "acceptance") goToStep("job");
+    else if (step === "job") goToStep("acceptance");
+    else if (step === "offer") goToStep("job");
+    else if (step === "survey1") goToStep("offer");
+    else if (step === "survey2") goToStep("survey1");
+    else if (step === "survey3") goToStep("survey2");
+    else if (step === "reason") goToStep("survey3");
+    else if (step === "reasonModal") goToStep("reason");
+    else if (step === "end" && form.gotJob) goToStep("acceptance");
+    else if (step === "end") goToStep("reasonModal");
   }
 
   function getReasonModal(reason: string | null) {
@@ -182,43 +196,43 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
 
   if (!isOpen) return null;
 
-  function handleCongratsNext(form: FormType) {
-    setForm(form);
-    console.log("form", form);
-    setStep("wish_helped_with");
+  function handleCongratsNext(updatedForm: FormType) {
+    setForm(updatedForm);
+    goToStep("wish_helped_with");
   }
-
-
-
 
   function handleWishHelpedWithNext(updatedForm: FormType) {
     setForm(updatedForm);
-    console.log("form", form.foundWithMM);
-
-    if(form.gotJob) {
-      setStep("with_mm");
-    }
-    else if(!form.gotJob) {
-      setStep("without_mm");
+    if (form.foundWithMigrateMate === "yes") {
+      goToStep("with_mm");
+    } else if (form.foundWithMigrateMate === "no") {
+      goToStep("without_mm");
     }
   }
 
   function handleWithMMNext(visaForm: FormType) {
     setForm(visaForm);
-    console.log("Visa Form: ", visaForm);
-
+    // Add next step logic here
   }
 
-  function handleWithoutMMNext(){
-
+  // Updated logic for StepWithoutMM
+  function handleWithoutMMNext(updatedForm?: FormType, branch?: "yes" | "no") {
+    if (updatedForm) setForm(updatedForm);
+    if (branch === "yes") {
+      goToStep("cancellation_sorted");
+    } else if (branch === "no") {
+      goToStep("end"); // Or another modal for "no"
+    }
   }
 
-  function handleVisaHelpNext(){
-    
+  function handleVisaHelpNext(updatedForm?: FormType) {
+    if (updatedForm) setForm(updatedForm);
+    // Add next step logic here
   }
 
-  function handleVisaNoHelpNext(){
-    
+  function handleVisaNoHelpNext(updatedForm?: FormType) {
+    if (updatedForm) setForm(updatedForm);
+    // Add next step logic here
   }
 
   return (
@@ -239,14 +253,12 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             onClose={onClose}
           />
         )}
-
         {step === "acceptance" && (
-
           <AcceptionFlow
             initialForm={form}
             onDone={data => {
               setForm(f => ({ ...f, ...data }));
-              setStep("congrats");
+              goToStep("congrats");
             }}
             onClose={onClose}
             startStep={0}
@@ -257,7 +269,7 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
           <StepCongratsNewRoleModal
             form={form}
             setForm={setForm}
-            nextStep={() => handleCongratsNext(form)}
+            nextStep={handleCongratsNext}
             prevStep={handlePrevStep}
             onClose={onClose}
           />
@@ -277,20 +289,21 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             form={form}
             setForm={setForm}
             nextStep={handleWithMMNext}
-            prevStep={handlePrevStep} 
+            prevStep={handlePrevStep}
             onClose={onClose}
-             isOpen={true}          />
+            isOpen={true}
+          />
         )}
         {step === "without_mm" && (
           <StepWithoutMM
             form={form}
             setForm={setForm}
             nextStep={handleWithoutMMNext}
-            onClose={onClose} 
-            isOpen={true}          />
+            onClose={onClose}
+            isOpen={true}
+          />
         )}
-
-        { step === "visa_help" && (
+        {step === "visa_help" && (
           <VisaHelp
             form={form}
             setForm={setForm}
@@ -299,31 +312,27 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             onClose={onClose}
           />
         )}
-        { step === "visa_no_help" && (
-          <VisaNoHelp 
+        {step === "visa_no_help" && (
+          <VisaNoHelp
             form={form}
             setForm={setForm}
             nextStep={handleVisaNoHelpNext}
             prevStep={handlePrevStep}
-            onClose={onClose} 
-          />
-        )}
-
-        { step === "no_visa_process_cancelled"&& (
-          <NoVisaProcessCancelled 
-            onFinish={() => {}}
             onClose={onClose}
           />
         )}
-
-        { step === "yes_visa_process_cancelled" && (
+        {step === "no_visa_process_cancelled" && (
           <NoVisaProcessCancelled
             onFinish={() => {}}
             onClose={onClose}
           />
         )}
-
-       
+        {step === "yes_visa_process_cancelled" && (
+          <NoVisaProcessCancelled
+            onFinish={() => {}}
+            onClose={onClose}
+          />
+        )}
         {step === "offer" && (
           <StepOffer
             form={form}
@@ -368,6 +377,13 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
           />
         )}
         {step === "reasonModal" && getReasonModal(selectedReason)}
+        {step === "cancellation_sorted" && (
+          <StepTeamMemberCard
+            isOpen={true}
+            nextStep={() => {}}
+            onClose={onClose}
+          />
+        )}
         {step === "end" && (
           <StepEnd
             form={form}
