@@ -24,6 +24,7 @@ import VisaHelp from "../accept/NoStepVisaHelp";
 import VisaNoHelp from "./steps/StepYesVisa";
 import CancellationSortedModal from "./steps/StepTeamMemberCard"; // <<-- Add this import
 import StepTeamMemberCard from "./steps/StepTeamMemberCard";
+import StepCancellationProcessed from "../accept/StepCancellationProcess";
 
 export type FormType = {
   gotJob?: boolean;
@@ -63,7 +64,7 @@ type StepName =
   | "without_mm"
   | "visa_help"
   | "visa_no_help"
-  | "no_visa_process_cancelled"
+  | "cancellation_processed"
   | "yes_visa_process_cancelled"
   | "offer"
   | "survey1"
@@ -221,7 +222,7 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
     if (branch === "yes") {
       goToStep("cancellation_sorted");
     } else if (branch === "no") {
-      goToStep("end"); // Or another modal for "no"
+      goToStep("cancellation_processed"); // Or another modal for "no"
     }
   }
 
@@ -321,9 +322,9 @@ export default function CancelFlow({ isOpen, onClose }: CancelFlowProps) {
             onClose={onClose}
           />
         )}
-        {step === "no_visa_process_cancelled" && (
-          <NoVisaProcessCancelled
-            onFinish={() => {}}
+        {step === "cancellation_processed" && (
+          <StepCancellationProcessed
+            isOpen={true}
             onClose={onClose}
           />
         )}
